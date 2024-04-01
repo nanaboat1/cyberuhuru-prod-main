@@ -1,0 +1,34 @@
+{% load i18n static %}
+{% load trip_tags %}
+<div style="width:100%">
+  <p>Here is the list of candidates by company {{company.company_name}}({{company.user.email_id}})</p>
+	<table width="100%" border="0" cellpadding="8" cellspacing="0" align="center" style="font-size:15px; font-family:arial; background-color:#fff; border:2px solid #ff6d57;">
+    <tr style="background-color:#ccc">
+      <td colspan="5"><img src="{% static 'img/logo2.png' %}" alt=""/></td>
+    </tr>
+
+		<thead>
+      <tr>
+        <th>S.NO.</th>
+        <th>Candidate Name</th>
+        <th>Candidate Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for candidate in users_list %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{candidate.username}}</td>
+          <td>{{candidate.email}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tr>
+      <td><h4>Best Regards,<br/>
+      CyberUhuru's Team.</h4></td>
+    </tr>
+		</table>
+	  </td>
+	</tr>
+	</table>
+</div>

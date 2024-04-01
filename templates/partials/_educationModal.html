@@ -1,0 +1,160 @@
+<div
+  class="modal fade"
+  id="modalEducationForm"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold" style="margin-left: 12%"> Education Qualification </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"> &times; </span></button>
+      </div>
+      <div class="modal-body mx-3">
+        <form 
+          id="education-form"
+          method="post"
+          class="form" 
+          role="form"
+          required
+          action="javascript:void(0)"
+          
+        >
+          {% csrf_token %} 
+          <!-- Form First Row -->
+          <div class="row"> 
+            <!-- Form First Row First Column -->
+            <div class="col-md-6 form-group">
+              <label
+                data-error="wrong"
+                data-success="right"
+                for="highest_qualification"
+                >Highest Qualification</label
+              >
+              <select 
+                id="highest_qualification"
+                name="highest_qualification"
+                class="form-control validate"
+                required
+                style="display: text"
+              >
+                <option value="" disabled selected>Qualification</option>
+              </select>
+            </div>
+            <!-- Form First Row Second Column -->
+            <div class="col-md-6 form-group">
+              <label data-error="wrong" data-success="right" for="institute"
+                >Institute</label
+              >
+              <input
+                id="institute"
+                name="institute"
+                type="text"
+                class="form-control validate"
+                placeholder="Institute"
+                required
+                style="display: text"
+              />
+            </div>
+          </div>
+          
+          <!-- Form Second Row -->
+          <div class="row"> 
+            <!-- Form Second Row First Column -->
+            <div class="col-md-6 form-group">
+              <label 
+                data-error="wrong" 
+                data-success="right" 
+                for="course_type"
+              > Course Type </label>
+              <select 
+                id="course_type"
+                name="course_type" 
+                class="form-control validate" 
+                required
+              >
+                <option value="" disabled selected>Select Course Type</option>
+              </select>
+              <div class="error-messages"></div>
+            </div>
+            
+            <!-- Form Second Row Second Column -->
+            <div class="col-md-6 form-group">
+              <label 
+                data-error="wrong" 
+                data-success="right" 
+                for="passing_out_year"
+              > Passing Out </label>
+              <select 
+                name="passing_out_year" 
+                id="passing_out_year" 
+                class="form-control validate" 
+                required
+              >
+                <option value="" disabled selected>Select Passing Year</option>
+              </select>
+              <div class="error-messages"></div>
+            </div>
+          </div>
+          
+          <!-- Form Third Row -->
+          <div class="row"> 
+            
+            <!-- Form Third Row First Column -->
+            <div class="col-md-6 form-group">
+              <label data-error="wrong" data-success="right" for="education_type"
+                >Education Type</label
+              >
+              <select 
+                id="education_type" 
+                name="education_type" 
+                class="form-control validate" 
+                required
+                style="display: text"
+              >
+                <option value="" disabled selected>Select Education Type</option>
+              </select>
+            </div>
+          </div>
+          <!--  Form Submit Button -->
+          <div class="modal-footer saveBtn d-flex justify-content-center">
+            <button 
+            id="education_submit"
+            type="submit"
+            name="education_submit"
+            class=""
+            > Save </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="flexcontainer" style="display: flex; justify-content: space-between;">
+  <div class="flexname">
+    <h2>Educational Details </h2>
+  </div>
+  <div  class="editBtn">
+    <button
+      id="education_add"
+      type="button"
+      class=""
+    >
+      <i class="fas fa-plus"></i>
+    </button>
+    <button
+      id="education_edit"
+      type="button"
+      disabled
+      class=""
+      data-toggle="modal"
+      data-target="#modalEducationForm"
+    >
+      <i class="fas fa-edit"></i>
+      
+    </button>
+  </div>
+</div>
+                                                                                                                                                                                           

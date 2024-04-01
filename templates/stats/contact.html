@@ -1,0 +1,97 @@
+{% extends 'base_inner.html' %}
+
+{% load static %} 
+
+{% block title %} Contact {% endblock title %}
+
+{% block content %}
+
+{% include 'partials/_messages.html' %}
+
+<section class="pageBanner position-relative">
+    <div class="pageCaption">
+      <div class="container">
+        <h1>Contact Us</h1>
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+            <li class="breadcrumb-item active">Contact Us</li>
+        </ul>
+      </div>
+    </div>
+</section>
+
+<section class="addSection">
+  <div class="container">
+    <h2>If you have any query staffing from <span>CyberUhuru… We are available</span></h2>
+    <div class="row" >
+      <div class="col-md-4 address">
+        {% for company_address in company_address %}
+        <img src="{% static "img/map.png"%}">
+        <h3>ADDRESS:</h3>
+        <p>{{company_address.company_address}}</p>
+      </div>
+      <div class="col-md-4 address">
+        <img src="{% static "img/mobile.png"%}">
+        <h3>Phone:</h3>
+        <p>{{company_address.contact_number}}</p>
+      </div>
+      <div class="col-md-4 address">
+        <img src="{% static "img/email.png"%}">
+        <h3>Email:</h3>
+        <p> {{company_address.email_address}}</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mapSection">
+  <div class="row no-gutters">
+    <div class="col-md-6">
+      {% comment %} <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3812.218034887029!2d-62.628677585162876!3d17.159601713851306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c123d4f5ffc9821%3A0x2ea1b9ca74e1ba3a!2sFour%20Seasons%20Resort%20Nevis!5e0!3m2!1sen!2sin!4v1626962547272!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe> {% endcomment %}
+    </div>
+    <div class="col-md-6 my-auto">
+      <div class="conInfo">
+        <form id="contact" method="post" class="form" role="form">
+          {% csrf_token %}
+          <h3>REQUEST A FREE <span>CONSULTATION</span></h3>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <input class="form-control" id="first_name" 
+                    name="first_name" placeholder="First Name" type="text" required style='display: text;' />
+            </div>
+            <div class="col-md-6 form-group">
+              <input class="form-control" id="last_name" 
+                    name="last_name" placeholder="Last Name" type="text" required style='display: text;'/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <input class="form-control" id="email_id" 
+                    name="email_id" placeholder="Email" type="email" required style='display: text;'/>
+            </div>
+            <div class="col-md-6 form-group">
+              <input class="form-control" id="phone_number" 
+                    name="phone_number" placeholder="Phone" type="number" required style='display: text;'/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 form-group">
+            <textarea class="form-control" id="message" name="message" placeholder="Message" type="text" required style='display: text;'></textarea>
+            </div>
+            <div class="col-md-12 form-group text-right">
+              <button type="submit">Send</button>
+            </div>
+          </div>	
+          	 
+        </form>
+      </div>
+    </div>
+  </div>
+</section>	
+
+{% endblock content %}
+

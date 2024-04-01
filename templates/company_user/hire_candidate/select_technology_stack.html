@@ -1,0 +1,156 @@
+{% extends 'base_profile.html' %} 
+{% load static %} 
+{% block title %} Select Technology Stack {% endblock title %} 
+{% block content %} 
+
+
+<section class="profile">
+  <div class="leftSidebar left">
+    <div class="menu-btn">
+      <a href="#" class="button-left"><i class="fas fa-bars"></i></a>
+    </div>
+    <ul class="lftMenu">
+      <li>
+        <a href="{% url 'company_dashboard' %}"><img src="{% static 'img/das-icon.png' %}" /> Dashboard</a>
+      </li>
+      <li>
+        <a href="{% url 'company_profile' %}"><img src="{% static 'img/edit.png' %}" /> Company Profile</a>
+      </li>
+      <li>
+        <a href="{% url 'monthly-subscription-view' %}" class="active"><img src="{% static 'img/certi.png' %}" />Hire
+          Candidates</a>
+      </li>
+      <li>
+        <a href="{% url 'previous-request' %}"><img src="{% static 'img/certi.png' %}" /> Previous Requests</a>
+      </li>
+      <li>
+        <a href="{% url 'hired-candidate-list' %}"><img src="{% static 'img/Agreement.png' %}" /> Hired Candidates</a>
+      </li>
+    </ul>
+  </div>
+  <div class="rightSidebar">
+    <ul class="breadcrumb">
+      <li><a href="{% url 'monthly-subscription-view' %}">Hire candidate</a></li>
+      &nbsp; - &nbsp;
+      <li>Technology Selection</li>
+    </ul>
+    <div class="trainingBox">
+      
+      <h1>Technology Selection</h1>
+      <div class="skiilBox">
+        <div class="selectTech">
+          
+            <label>Select Technology Stack </label>
+            <select id='select_skills' multiple>
+              <option disabled selected value="">Select Technology*</option>
+              {% for skill in skills_set %}
+                <option id="skill{{skill.id}}"  value="{{skill.id}}">
+                  {{skill.name}}
+                </option>
+              {% endfor %}
+            </select>
+        </div>
+        <ul id="techSkills" class="techList">
+
+        </ul>
+        <button ></button>
+        <div class="skipBtn text-left pt-5">
+          <a href="{% url 'skills-listing-view' %}">PROCEED</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+{% block footer_scripts %} 
+<script>
+  
+  $(document).ready(function(){
+    var url = "{% url 'technolgy-stack' %}"
+    var method = "GET"
+    var dataType = 'JSON'
+    var token = "{{ csrf_token }}"
+    
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': token   // Token used for authentication
+      },
+      success: function(res){
+
+       var data = res.data
+       for(i=0; i < data.length; i++){
+         $("#select_skills option[id=skill" + data[i].skills__id + "]").attr("selected", "selected");
+         $("#techSkills").append("<li id=" + data[i].skills__id + ">" + data[i].skills__name  + "<a href='#' onclick=removeStack(" + data[i].skills__id + ")><img src='/static/img/close3.png'></a>" )
+       }
+      }
+    })
+  })
+
+  $('#select_skills').on('change', function(){
+    var selected_skills = $(this).val()
+
+    // Declare variable that was used in ajax call
+    var url = "{% url 'technolgy-stack' %}"
+    var method = "POST"
+    var token = "{{csrf_token}}";
+  
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      data:{
+        skills_ids: selected_skills
+      },
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function(res){
+        var data = res.data
+        $("#techSkills").html("")
+        for(i=0; i < data.length; i++){
+          $("#select_skills option[id=skill" + data[i].skills__id + "]").attr("selected", "selected");
+          $("#techSkills").append(
+            "<li id=" + data[i].skills__id + ">" + 
+              data[i].skills__name  + 
+                "<a href='#' onclick=removeStack(" + data[i].skills__id + ")>" + 
+                  "<img src='/static/img/close3.png'>" + 
+                "</a>" + 
+            "</li>" )
+        }
+      }
+    })
+  })
+
+  function removeStack(skill_id){
+    var url = "{% url 'remove-technolgy-stack' %}"
+    var method = "POST"
+    var token = "{{csrf_token}}";
+  
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      data:{
+        skill_id: skill_id
+      },
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function(res){
+        
+        $("#select_skills option[id=skill" + res.data.deleted_skill_id + "]").prop("selected", false);
+        $("#" + res.data.deleted_skill_id).remove();
+      }
+    })
+  }
+
+
+
+
+</script>
+
+
+{%endblock footer_scripts%}

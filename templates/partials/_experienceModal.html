@@ -1,0 +1,206 @@
+
+<div
+  class="modal fade"
+  id="modalExperineceForm"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" id="modal-div" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold" style="margin-left: 12%">
+          Work Experience
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" > &times; </span></button>
+      </div>
+      
+      <div class="modal-body mx-3">
+      
+        <form 
+          id="experience-form"
+          method="post"
+          class="form" 
+          role="form"
+          required
+          action="javascript:void(0)"
+          
+        >
+          {% csrf_token %}
+          
+          <div class="row">
+            <div class="col-md-6 form-group">
+          
+              <label data-error="wrong" data-success="right" for="company_name"
+                >Company Name*</label
+              >
+              <input
+                id="company_name"
+                name="company_name"
+                type="text"
+                class="form-control validate"
+                placeholder="Company Name"
+                required
+                style="display: text"
+              />
+              <div class="error-messages"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label data-error="wrong" data-success="right" for="designation"
+                >Designation*</label
+              >
+              <input
+                id="designation"
+                name="designation"
+                type="text"
+                class="form-control validate"
+                placeholder="Designation"
+                required
+                style="display: text"
+              />
+              <div class="error-messages"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <input 
+                id="currently_working"
+                name="currently_working"
+                class="form-check-label" 
+                type="checkbox" 
+                onclick="currently_working_clicked()"
+              >
+              <label class="form-check-label" for="currently_working">
+                currently working*
+              </label>
+              {% comment %} <div class="error-messages"></div> {% endcomment %}
+            </div> 
+            <div class="col-md-6 form-group">
+              <label data-error="wrong" data-success="right" for="skills"
+                >Skills*</label
+              >
+              <input
+                id="skills"
+                name="skills"
+                type="text"
+                class="form-control validate"
+                placeholder="Skills"
+                required
+                style="display: text"
+              />
+              <div class="error-messages"></div>
+            </div> 
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label data-error="wrong" data-success="right" for="joining_date"
+                >Joining Date*</label
+              >
+              <input
+                id="joining_date"
+                name="joining_date"
+                type="date"
+                class="form-control"
+                required
+                style="display: text"
+              />
+              <div class="error-messages"></div>
+            </div>
+            <div class="col-md-6 form-group">
+              <label data-error="wrong" data-success="right" for="end_date"
+                >End Date*</label
+              >
+              <input
+                id="end_date"
+                name="end_date"
+                type="date"
+                class="form-control"
+                required
+                style="display: text"
+
+              />
+              <div class="error-messages"></div>
+            </div>
+          </div>
+          
+          <div class="row">
+            
+            <div class="col-md-12 form-group">
+              <label data-error="wrong" data-success="right" for="description"
+                >Description*</label
+              >
+              <textarea
+                id="description"
+                name="description"
+                type="text"
+                class="md-textarea form-control"
+                rows="4"
+                required
+                placeholder="Description"
+                style="display: text"
+              ></textarea>
+              <div class="error-messages"></div>
+            </div>
+          </div>
+            
+          <div class="modal-footer saveBtn d-flex justify-content-center">
+            <button 
+              id="experience_submit"
+              type="submit"
+              name="experience_submit"
+              class=""
+            >
+                Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flexcontainer" style="display: flex; justify-content: space-between;">
+  <div class="flexname">
+    <h2>Employment History</h2>
+  </div>
+  <div class="editBtn">
+      <button
+        id="experience_add"
+        type="button"
+        class=""
+        data-toggle="modal"
+        data-target="#modalExperineceForm"
+      >
+        <i class="fas fa-plus"></i>
+        
+      </button>
+      <button
+        id="experience_edit"
+        disabled
+        type="button"
+        class=""
+        data-toggle="modal"
+        data-target="#modalExperineceForm"
+      >
+        <i class="fas fa-edit"></i>
+         
+      </button>
+  </div>
+</div>
+
+{% block footer_scripts %}
+
+<script>
+
+function currently_working_clicked(){
+  var utc = new Date().toJSON().slice(0,10)
+  console.log(utc)
+  $("#end_date").val(utc);
+}
+
+
+</script>
+
+{%endblock%}

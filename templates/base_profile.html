@@ -1,0 +1,330 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EVQDLRZFTK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EVQDLRZFTK');
+</script>
+<script src="https://cmp.osano.com/AzqVhCU6cxQmt6T2i/772e052f-39db-4fff-946b-6a80e939cec6/osano.js"></script>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- favicon icon -->
+<link rel="icon" href={% static "latest_ui/images/favicon.ico"%}>
+<!-- Title of website -->
+<title></title>
+<!-- Bootstrap core CSS -->
+<link href={% static "latest_ui/css/bootstrap.min.css"%} rel="stylesheet" type="text/css">
+<!-- Custom Fonts CSS -->
+<link href={% static "latest_ui/css/fonts.css"%} rel="stylesheet" type="text/css">
+<!-- slider CSS -->
+<link href={% static "latest_ui/css/owl.carousel.min.css" %} rel="stylesheet" type="text/css">
+<link href={% static "latest_ui/css/owl.theme.default.min.css"%} rel="stylesheet" type="text/css">
+<!-- Custom CSS -->
+<link href={% static "latest_ui/css/style.css"%} rel="stylesheet" type="text/css">
+<link href={% static "latest_ui/css/menu.css"%} rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="page-header"> 
+  <!-- logoBar -->
+  <div class="logoBar">
+    <div class="container">
+      <div class="row align-items-center">
+        <aside class="col-lg-3 col-md-3 col-6"> <a href="/" class="logo" title="Bybee PC">CyberUhuru </a> </aside>
+        <aside class="col-lg-9 col-md-9 col-6 d-flex align-items-center justify-content-end">
+          <div class="siteMenus">
+            <ul>
+              <li><a href="/" class="active">Home</a></li>
+              <li><a href="/about">About Us</a></li>
+              <li><a href="/course">Courses</a></li>
+              <li><a href="/blog">Blog</a></li>
+              
+            </ul>
+
+          </div>
+          <ul class="becomeBtn d-none d-lg-inline-flex">
+            
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+</header>
+
+  <header class="InnerHeader">
+    <div class="container">
+      <div class="row align-items-center no-gutters">
+
+      </div>
+    </div>
+
+    <div class="mainMenu d-none">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-5 col-lg-7">
+            <div class="stellarnav">
+              <ul>
+                {% if template_name == "stats/index.html" %}
+                <li><a href="#specalCyber">Courses</a></li>
+                {% else %}
+                <li><a href={% url 'course'%}>Courses</a></li>
+                {% endif %}
+                <li><a id="hiring" href="#banner2">Hiring Process</a></li>
+                <li><a href={% url 'certificate'%}>Certification</a></li>
+                <li><a href={% url 'about'%}>About</a></li>
+                <li><a href={% url 'contact'%}>Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-7 col-lg-5 d-flex align-items-center justify-content-end flex-wrap">
+            {% if user.is_authenticated %}
+            <div class="loginBtn">
+              <div class="welcome">
+                <a href="#demo" data-toggle="collapse" class="profileImg d-flex align-items-center text-dark">
+                  {% if user.is_candidate_user %}
+                    <div class="userName"> {{user.first_name}} {{user.last_name}}</div>
+                  {% else %}
+                    <div class="userName"> {{user.company_user.first.company_name}}</div>
+                  {% endif %}
+                  
+                  {% if user.profile_photo %}
+                  <figure class="mb-0 ml-2"><img id='header-pic' class="rounded-circle" src="{{user.profile_photo.url}}" width=45
+                      height=45></figure>
+                  {% else %}
+                  <figure class="mb-0 ml-2"><img class="rounded-circle" src="{% static 'img/user2.png'%}" width=45
+                      height=45> </figure>
+                  {% endif %}
+                </a>
+                <div class="userProfile_2">
+                  <div id="demo" class="collapse menuList">
+                    <ul>
+                      {% if user.is_company_user %}
+                      <li><a href="{% url 'company_profile' %}">Profile</a></li>
+                      {% else %}
+                      <li><a href="{% url 'profile' %}">Profile</a></li>
+                      {% endif %}
+                      <li><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <div class="loginBtn">
+              <button><a href="{% url 'user_sign_in' %}" style="color: white">Candidate Login</a></button>
+              <button><a href="{% url 'company_login' %}" style="color: white">Company Login</a></button>
+            </div>
+            {% endif %}
+            <div class="menuSerch">
+              <a class="searchBtn" href="#" id="toggle-search"><i class="fas fa-search"></i></a>
+              <form class="d-flex" method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <input style='display:none; text-align: right; margin-top: 10%;' id='searchBar' name='searched'
+                  type='search' placeholder='Search&hellip;'>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  {% block content %}
+
+  {% endblock content %}
+  <footer>
+    {% include "partials/_footer.html" %}
+  </footer>
+
+  <script src="{% static "js/jquery.min.js"%}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="{% static "js/bootstrap.min.js"%}"></script>
+  <script src="{% static "js/simplebar.js"%}"></script>
+
+
+  <script type="text/javascript" src="{% static "js/stellarnav.min.js"%}"></script>
+  <script type="text/javascript">
+    jQuery(document).ready(function ($) {
+      jQuery('.stellarnav').stellarNav({
+        //theme: 'dark',
+        breakpoint: 991,
+        position: 'right',
+        //phoneBtn: '18009997788',
+      });
+    });
+  </script>
+  <script src="{% static "js/owl.carousel.min.js"%}"></script>
+  <script>
+    $(document).ready(function () {
+      $("#bannerSlider").owlCarousel({
+        //animateOut: 'fadeOut',
+        items: 1,
+        nav: false,
+        dots: true,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 5000,
+        autoplayHoverPause: true
+      });
+    });
+  </script>
+  <script>
+    $('#calender').owlCarousel({
+      loop: true,
+      margin: 30,
+      dots: false,
+      nav: true,
+      autoplay: true,
+      singleItem: true,
+      navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+      responsiveClass: true,
+      responsive: {
+        0: {
+          items: 1
+        },
+        400: {
+          items: 1
+        },
+        768: {
+          items: 2
+        },
+        1000: {
+          items: 3
+        },
+        1400: {
+          items: 3
+        }
+      }
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('#welModal').modal('show');
+    });
+  </script>
+  <script>
+    $('#toggle-search').on('click', function () {
+      $('#searchBar').toggle('display: inline-block');
+    });
+  </script>
+  <!-- custom check box -->
+  <script type="text/javascript">
+    function customCheckbox(checkboxName) {
+      var checkBox = $('input[name="' + checkboxName + '"]');
+      $(checkBox).each(function () {
+        $(this).wrap("<span class='custom-checkbox'></span>");
+        if ($(this).is(':checked')) {
+          $(this).parent().addClass("selected");
+        }
+      });
+      $(checkBox).click(function () {
+        $(this).parent().toggleClass("selected");
+      });
+    }
+    $(document).ready(function () {
+      customCheckbox("option[]");
+    })
+  </script>
+  <script>
+    function customRadio(radioName) {
+      var radioButton = $('input[name="' + radioName + '"]');
+      $(radioButton).each(function () {
+        $(this).wrap("<span class='custom-radio'></span>");
+        if ($(this).is(':checked')) {
+          $(this).parent().addClass("selected");
+        }
+      });
+      $(radioButton).click(function () {
+        if ($(this).is(':checked')) {
+          $(this).parent().addClass("selected");
+        }
+        $(radioButton).not(this).each(function () {
+          $(this).parent().removeClass("selected");
+        });
+      });
+    }
+    $(document).ready(function () {
+      customRadio("gender");
+      customRadio("2");
+      customRadio("1");
+      customRadio("3");
+
+
+    })
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('.button-left').click(function () {
+        $('.leftSidebar').toggleClass('fliph');
+      });
+
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $('#Button1').on('click', function () {
+        $('#Container')
+          .clone()
+          .text('I am a Clone')
+          .appendTo("body");
+      });
+    });
+  </script>
+  <script>
+    $(window).scroll(function () {
+      var sticky = $('.mainMenu'),
+        scroll = $(window).scrollTop();
+
+      if (scroll >= 526) sticky.addClass('fixed');
+      else sticky.removeClass('fixed');
+    });
+  </script>
+  <script>
+    $(document).click(function (e) {
+      if (!$(e.target).is('.menuList ul')) {
+        $('.collapse').collapse('hide');
+      }
+    });
+  </script>
+  <script>
+    const header = document.querySelector(".page-header");
+  const toggleClass = "is-sticky";
+  
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.pageYOffset;
+    if (currentScroll > 150) {
+      header.classList.add(toggleClass);
+    } else {
+      header.classList.remove(toggleClass);
+    }
+  });
+  
+  </script>
+  <script type="text/javascript">
+    var $root = $('html, body');
+
+    $('.stellarnav ul li a').click(function () {
+      $root.animate({
+        scrollTop: $($.attr(this, 'href')).offset().top
+      }, 450);
+
+      return false;
+    });
+  </script>
+  {% block footer_scripts %}
+  {% endblock %}
+
+  {% block video_footer_script %}
+  {% endblock video_footer_script %}
+</body>
+
+</html>

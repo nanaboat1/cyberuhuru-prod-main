@@ -1,0 +1,41 @@
+{% extends 'base_profile.html' %}
+
+{% load static %}
+
+{% block title %} Candidate | Test Info. {% endblock title %}
+
+{% block content %}
+{% include 'partials/_messages.html' %}
+<section class="profile pt-5 pb-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="trainingBox">
+					<h1 class="d-flex justify-content-between">Test Instructions <a
+							href="{% url 'candidate_training' %}" class="backBtn">Back</a></h1>
+					<div class="time">
+						<h2>{{data.name}}</h2>
+						<h3>Duration: {{data.duration}} (HH:MM:SS) </h3>
+						<ul>
+							<li>1. The test contains {{data.no_of_questions}} total questions.</li>
+							<li>2. Multiple type questions</li>
+						</ul>
+					</div>
+					<div class="thingsRem">
+						<h4>Things to remember :</h4>
+						<p>{{data.instructions}}</p>
+						<a href="{% url 'candidate_test' %}?course_id={{data.course_id}}" >PROCEED</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</section>
+
+{% endblock content %}
+
+{% block footer_scripts %}
+
+{%endblock footer_scripts%}

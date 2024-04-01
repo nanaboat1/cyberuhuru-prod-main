@@ -1,0 +1,733 @@
+{% extends 'base_profile.html' %}
+
+{% load static %}
+
+{% block title %} Company Profile {% endblock title %}
+
+{% block content %}
+
+{% include 'partials/_messages.html' %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Profile</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}"> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+    <!-- Right Side section  -->
+  <div class="profileForm">
+
+    <div class="profileImage">
+      <figure><img src="
+        {% if company.user.profile_photo %}
+          {{ company.user.profile_photo.url }} 
+        {% else %}
+          {% static 'img/user2.png'%}  
+        {% endif %}" alt=""><a href="">
+          <label class= "image-icon"> <i class="fas fa-camera"></i></a></figure></label>
+      <div class="proBar">
+        <p>45% of your profile is completed</p>
+        <div class="progress">
+          <div class="progress-bar bg-info" role="progressbar" style="width: 45%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+  </div>
+
+    <!-- Profile Information section -->
+    <div class="perInfo">
+      <h1>Company Information </h1>
+      <form id="company-profile-form" method="post" class="cnForm mt-4" role="form" action="javascript:void(0)">
+        {%csrf_token%}
+        <div id="pi-error-msg">
+        </div>
+        <div class="row">
+          <div class="col-md-12 form-group mb-4">
+            <label>Company Name<span style="color: #ee3535;">*</span></label>
+            <input 
+              class="form-control" 
+              id="company_name" 
+              name="company_name" 
+              placeholder="Company Name" 
+              type="text"
+              maxlength="55"
+              value="{{company.company_name}}" 
+            />
+            <div class="error-messages"></div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6 form-group mb-4">
+            <label>Email<span style="color: #ee3535;">*</span></label>
+            <input 
+              class="form-control" 
+              id="email_id" 
+              name="email_id" 
+              placeholder="Email" 
+              type="email"
+              readonly
+              value="{{company.user.email_id}}" />
+              <div class="error-messages"></div>
+          </div>
+
+          <div class="col-md-6 form-group mb-4">
+            <label>Phone<span style="color: #ee3535;">*</span></label>
+            <input 
+              class="form-control" 
+              id="phone_number" 
+              name="phone_number" 
+              placeholder="Phone" 
+              type="text"
+              required
+              value="{{company.user.phone_number}}"
+              minlength="10"
+              maxlength="10" 
+            />
+              <div class="error-messages"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label>Location<span style="color: #ee3535;">*</span></label>
+          </div>
+          <div class="col-md-4 form-group mb-4">
+            <select class="form-control" id="country" name="country" required>
+              <option value="" disabled>Select Country*</option>
+                {% for country in countries %}
+                  {% if company.address.country.id  == country.id %}
+                    <option value="{{country.id}}" selected>
+                        {{country.country}}
+                    </option>
+                  {% else %}
+                    <option value="{{country.id}}">
+                      {{country.country}}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+            </select>
+            <div class="error-messages"></div>
+          </div>
+
+          <div class="col-md-4 form-group mb-4">
+            <select id="state" name="state" required>
+            </select>
+            <div class="error-messages"></div>
+          </div>
+
+          <div class="col-md-4 form-group mb-4">
+            <select id="city" , name="city">          
+            </select>
+            <div class="error-messages"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 form-group mb-4">
+            <label>Industry<span style="color: #ee3535;">*</span></label>
+            <select id="industry" name="industry" required>
+            </select>
+            <div class="error-messages"></div>
+          </div>
+          <div class="col-md-6 form-group mb-4">
+            <label>Establisment at<span style="color: #ee3535;">*</span></label>
+            <input 
+              class="form-control" 
+              id="establish_at" 
+              name="establish_at" 
+              placeholder="Established at" 
+              type="date"
+              value="{{company.establish_date}}"
+             />
+							<div class='error-messages'></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 form-group saveBtn mb-4">
+            <button 
+              id="profile_submit" 
+              type="submit" 
+              name="profile_submit" 
+              style="padding: 5px 51px 5px;"
+            >
+            <i id="profile-loading-icon" class="loading-icon fa fa-spinner fa-spin hide"></i>
+              <span id="profile-btn-txt" class="btn-txt">
+                Update
+              </span>
+            </button>
+        </div>
+      </form>
+    </div>
+  </div>
+<hr>
+  <!--  change password section -->
+  <div class="perInfo">
+    <h1>Change Password</h1>
+    <form id="change-password-form" method="post" class="cnForm mt-4" role="form" action="javascript:void(0)">
+      {% csrf_token%}
+      <div id="change-password-msg"></div>
+      <div class="row">
+        <div class="col-md-4 form-group mb-4">
+          <label>Old Password<span style="color: #ee3535;">*</span></label>
+          <input 
+            class="form-control" 
+            id="old_password" 
+            name="old_password" 
+            placeholder=" Old Password"
+            type="password"
+            required 
+            style='display: text;' />
+            <div class='error-messages'></div>
+        </div>
+
+        <div class="col-md-4 form-group mb-4">
+          <label>New Password<span style="color: #ee3535;">*</span></label>
+          <input 
+            class="form-control" 
+            id="new_password" 
+            name="new_password" 
+            placeholder=" New Password"
+            type="password" 
+            required 
+            style='display: text;' />
+            
+            <div class='error-messages'></div>
+        </div>
+        <div class="col-md-4 form-group mb-4">
+          <label>Confirm New Password<span style="color: #ee3535;">*</span></label>
+          <input 
+            class="form-control" 
+            id="confirm_new_password" 
+            name="confirm_new_password"
+            placeholder="Confirm New Password" 
+            type="password" 
+            required 
+            style='display: text;' />
+            <div class='error-messages'></div>
+        </div>
+        <div style="margin-left: 30px;">
+          <span class="help-block" style="color: #a8a8a8; font-size: 10px;">
+            * Password should contain: 
+            <ul class="help-list" style="list-style-type:disc;">
+              <li>8 characters long</li>
+              <li>1 uppercase(A-Z) & 1 lowercase character(a-z)</li>
+              <li>1 special character(@$!%*#?&) & 1 digit(0-9)</li>
+            </ul>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 form-group">
+          <div class="saveBtn">
+            <button 
+              id="change-password-submit" 
+              type="submit"
+              style="padding: 5px 51px 5px;"
+            >
+              <i id="change-pass-icon" class="loading-icon fa fa-spinner fa-spin hide"></i>
+              <span id="change-pass-txt" class="btn-txt">
+                Update
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<div  id="confirmation_modal" class="modal fade"  >
+  <div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header flex-column">
+				<h4 class="modal-title w-100">Are you sure?</h4>	
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body">
+				<p>Do you really want to update the profile pic ???</p>
+			</div>
+			<div class="modal-footer justify-content-center">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+				<button id="modal-save" type="button" class="btn btn-success" >Yes</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div  id="login_modal" class="modal fade"  >
+  <div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header flex-column">	
+          <button type="button" class="close"  data-dismiss="modal" aria-hidden="true" >&times;</button>
+			</div>
+			<div class="modal-body">
+				<p>Your Password Changed successfully, please Login again.. </p>
+			</div>
+			<div class="modal-footer justify-content-center">
+				<button id="modal-save" type="button" class="btn btn-success" onclick="redirectToLogin()" >Login</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+
+{% block footer_scripts %}
+
+<script>
+
+  // On country change  get state 
+  $("#country").change(function () {
+    var thisObj = $(this).val();
+    var token = "{{csrf_token}}";
+    $.ajax({
+      url: "{% url 'state' %}",
+      data: {
+        country_id: thisObj
+      },
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function (res) {
+        $('#state').html(res.data);
+      }
+    });
+  });
+  
+  // On state change get city
+  $("#state").on('change', function () {
+    var thisObj = $(this).val();
+
+    var token = "{{csrf_token}}";
+    $.ajax({
+      url: "{% url 'city' %}",
+      data: {
+        state_id: thisObj,
+        city_id: "{{company.address.city.id}}"
+      },
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function (res) {
+        $('#city').html(res.data);
+      }
+    });
+  });
+
+  // On state ready get State 
+  $("#state").ready(function () {
+    var thisObj = "{{company.address.country.id}}";
+    var token = "{{csrf_token}}";
+    $.ajax({
+      url: "{% url 'state' %}",
+      data: {
+        country_id: thisObj,
+        state_id: "{{company.address.state.id}}"
+      },
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function (res) {
+        $('#state').html(res.data);
+      }
+    });
+  });
+
+  // On State ready  get city
+  $("#state").ready(function () {
+    var thisObj = "{{company.address.state.id}}";
+
+    var token = "{{csrf_token}}";
+    $.ajax({
+      url: "{% url 'city' %}",
+      data: {
+        state_id: thisObj,
+        city_id: "{{company.address.city.id}}"
+      },
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function (res) {
+        $('#city').html(res.data);
+      }
+    });
+  });
+
+  	// Jquery/Ajax to Get Industry List
+	$("#industry").ready(function () {
+		var token = "{{csrf_token}}";
+		$.ajax({
+			url: "{% url 'industry' %}" +  "?industry_id=" + '{{company.industry.id}}',
+			method: "GET",
+			success: function (res) {
+				$("#industry").html(res.data);
+			},
+		});
+	});
+
+  // Post Method Jquery/Ajax for Profile Form
+  $("#company-profile-form").submit(function () {
+    $("#profile-loading-icon").removeClass("hide")
+    $("#profile_submit").attr("disabled", true)
+    $("#profile-btn-txt").text("Loading.....")
+
+    var form = document.getElementById('company-profile-form')
+    var token = "{{csrf_token}}";
+    var formData = new FormData(form);
+    var fromObj = $("#company-profile-form");
+    var url = "{% url 'company_profile' %}";
+
+    $.ajax({
+      url: url,
+      method: "POST",
+      dataType: "JSON",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        "X-CSRFToken": token
+      },
+      beforeSend: function () {
+        fromObj.find(".error-message").remove();
+      },
+      success: function (res) {
+        $("#profile-loading-icon").addClass("hide")
+        $("#profile_submit").attr("disabled", false)
+        $("#profile-btn-txt").text("Update")
+        if (res.status) {    
+          $(".error-messages").hide()
+          $(".form-control").css({
+            border: "0px"
+          })
+          
+          fromObj.find("#pi-error-msg")
+            .html("Your Information updated successFully!")
+            .css({'color': 'green', 'font-size': '14px', 'text-align': 'center'})
+          setTimeout(function(){ 
+            fromObj.find("#pi-error-msg").html('')
+           }, 3000)
+        } 
+        else if (!$.isEmptyObject(res.errors)) {
+          $.each(res.errors, function (i, v) {
+            fromObj.find('input[name=' + i + ']').siblings("div").html(v.join(','));
+            fromObj
+              .find("input[name=" + i + "]")
+              .css({
+                border: "1px solid red"
+              });
+            fromObj
+              .find("input[name=" + i + "]")
+              .siblings("div")
+              .css({
+                'color': 'red',
+                'font-size': '10px'
+              });
+          });
+        } 
+        else {
+          console.log("Something Went wrong in Profile update ")
+        }
+      }
+    })
+  });
+
+  // Validation for disable future dates of datepicker
+  $("#establish_at").click(function(){
+    var dtToday = new Date();
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+
+    var maxDate = year + '-' + month + '-' + day;    
+    $('#establish_at').attr('max', maxDate);
+    
+  })
+
+  // Modal open 
+  $("#profileImage").on("change", function(){
+    $('#confirmation_modal').modal('show');
+  })
+
+  // Save image ajax
+  $('#modal-save').click(function(){
+    var form = document.getElementById('profileImage')
+    var formData = new FormData(form);
+    var token = "{{csrf_token}}";
+    var url = "{% url 'company-pic-update' %}"
+    var fromObj = $("#profileImage");
+    
+    $.ajax({
+      url: url,
+      method: "POST",
+      dataType: "JSON",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function(res){
+        if(res.status == true){
+          $('#profile_photo').attr("src", res.data.profile_photo);
+          $('#header-pic').attr("src", res.data.profile_photo);
+          $('#confirmation_modal').modal('hide');
+
+          fromObj.find("#pic-msg")
+            .html("Your image uploded successfully!")
+            .css({'color': 'green', 'font-size': '14px'})
+          setTimeout(function(){ 
+            fromObj.find("#pic-msg").html('')
+           }, 3000);
+        }
+        else{
+          $('#confirmation_modal').modal('hide');
+          fromObj.find("#pic-msg")
+            .html("Something went wrong, Please try again!")
+            .css({'color': 'red', 'font-size': '14px'})
+          setTimeout(function(){ 
+            fromObj.find("#pic-msg").html('')
+           }, 3000);
+        }
+      }
+    })
+  });
+
+  // To redirect to subscription Page 
+  function redirectSubscription(){
+    var url = "{% url  'annual-subscription'  %}";
+    location.href = url
+  }
+  function redirectToLogin(){
+    var url = "{% url  'company_login'  %}";
+    location.href = url
+  }
+
+  $("#change-password-form").submit(function () {
+    $("#change-pass-icon").removeClass("hide")
+    $("#change-password-submit").attr("disabled", true)
+    $("#change-pass-txt").text("Loading.....")
+
+    var form = document.getElementById('change-password-form')
+    var token = "{{csrf_token}}";
+    var formData = new FormData(form);
+    var fromObj = $("#change-password-form");
+    var url = "{% url 'change_password' %}";
+
+    $.ajax({
+      url: url,
+      method: "POST",
+      dataType: "JSON",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        "X-CSRFToken": token
+      },
+      beforeSend: function () {
+        fromObj.find(".error-messages").html('')
+        fromObj
+              .find("input")
+              .css({
+                border: ""
+              });
+      },
+      success: function (res) {
+        $("#change-pass-icon").addClass("hide")
+        $("#change-password-submit").attr("disabled", false)
+        $("#change-pass-txt").text("Update")
+        if (res.status) {    
+          
+          $(".error-messages").hide()
+          $(".form-control").css({
+            border: "0px"
+          })
+          fromObj.find("#change-password-msg")
+            .html(res.data.message)
+            .css({'color': 'green', 'font-size': '14px', 'text-align': 'center'})
+          setTimeout(function(){ 
+            fromObj.find("#change-password-msg").html('')
+           }, 3000);
+           $('#login_modal').modal('show')
+        } 
+        else if (!$.isEmptyObject(res.errors)) {
+          $.each(res.errors, function (i, v) {
+            fromObj.find('input[name=' + i + ']').siblings("div").html(v.join(','));
+            fromObj
+              .find("input[name=" + i + "]")
+              .css({
+                border: "1px solid red"
+              });
+            fromObj
+              .find("input[name=" + i + "]")
+              .siblings("div")
+              .css({
+                'color': 'red',
+                'font-size': '10px'
+              });
+          });
+        } else {
+          console.log("Something Went wrong in Profile update ")
+        }
+      }
+    })
+  });
+
+</script>
+
+<style>
+  body {
+    font-family: 'Varela Round', sans-serif;
+  }
+  .modal-confirm {		
+    color: #636363;
+    width: 400px;
+  }
+  .modal-confirm .modal-content {
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    font-size: 14px;
+  }
+  .modal-confirm .modal-header {
+    border-bottom: none;   
+    position: relative;
+  }
+  .modal-confirm h4 {
+    text-align: center;
+    font-size: 26px;
+    margin: 30px 0 -10px;
+  }
+  .modal-confirm .close {
+    position: absolute;
+    top: -5px;
+    right: -2px;
+  }
+  .modal-confirm .modal-body {
+    color: #999;
+  }
+  .modal-confirm .modal-footer {
+    border: none;
+    text-align: center;		
+    border-radius: 5px;
+    font-size: 13px;
+    padding: 10px 15px 25px;
+  }
+  .modal-confirm .modal-footer a {
+    color: #999;
+  }		
+  .modal-confirm .icon-box {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 50%;
+    z-index: 9;
+    text-align: center;
+    border: 3px solid #f15e5e;
+  }
+  .modal-confirm .icon-box i {
+    color: #f15e5e;
+    font-size: 46px;
+    display: inline-block;
+    margin-top: 13px;
+  }
+  .modal-confirm .btn, .modal-confirm .btn:active {
+    color: #fff;
+    border-radius: 4px;
+    background: #60c7c1;
+    text-decoration: none;
+    transition: all 0.4s;
+    line-height: normal;
+    min-width: 120px;
+    border: none;
+    min-height: 40px;
+    border-radius: 3px;
+    margin: 0 5px;
+  }
+  .modal-confirm .btn-secondary {
+    background: #c1c1c1;
+  }
+  .modal-confirm .btn-secondary:hover, .modal-confirm .btn-secondary:focus {
+    background: #b30a0a;
+  }
+  .modal-confirm .btn-danger {
+    background: #f15e5e;
+  }
+  .modal-confirm .btn-danger:hover, .modal-confirm .btn-danger:focus {
+    background: #ee3535;
+  }
+  .trigger-btn {
+    display: inline-block;
+    margin: 100px auto;
+  }
+  .hide {
+    display: none;
+  }
+
+
+</style>
+
+{% endblock footer_scripts%}

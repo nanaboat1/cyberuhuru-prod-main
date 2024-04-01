@@ -1,0 +1,24 @@
+{% load i18n static %}
+{% load trip_tags %}
+<div style="width:100%">
+	<table width="100%" border="0" cellpadding="8" cellspacing="0" align="center" style="font-size:15px; font-family:arial; background-color:#fff; border:2px solid #ff6d57;">
+		<tr style="background-color:#ccc">
+			<td colspan="5"><img src="{% static 'users/img/logo.png' %}" alt=""/></td>
+		</tr>
+		<tr>
+			<td style="background:#fff; font-size:16px; border-right:1px dashed; border-color:#ccc;" colspan="3"><h3 style="text-transform:uppercase;"><p>Hello {{user.first_name}} {{user.last_name}},</p></h3>Your current {{plan_type}} plan has been experied!</td>
+		</tr>
+		<tr>
+			<td colspan="3"><p>Kindly Upgarde your Account.</p></td>
+		</tr>
+		<tr>
+		</tr>
+		<tr>
+			<td><h4>Best Regards,<br/>
+			Grandma's House Team.</h4></td>
+		</tr>
+		</table>
+	  </td>
+	</tr>
+	</table>
+</div>

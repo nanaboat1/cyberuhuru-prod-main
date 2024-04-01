@@ -1,0 +1,165 @@
+{% load i18n static %}
+{% block content %}
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{% if user.profile_photo %} {{user.profile_photo.url}} {% else %} {% static 'img/user2.png' %} {% endif %}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          {% block welcome-msg %}
+            {% trans 'Welcome' %}
+            <p>{% firstof user.first_name user.first_name %} {% firstof user.last_name user.last_name %}</p>
+          {% endblock %}
+        </div>
+      </div>
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" >
+
+        <li class="sidebar-item">
+          <a  
+            href="{% url 'admin:index' %}" 
+            role="button" 
+            
+            tabindex="1"
+          > 
+            <i class="fa fa-dashboard"></i>
+            Dashboard
+          </a>
+          
+        </li>
+
+        <!-- user Management List -->
+        <li class="sidebar-item">
+          <a 
+            class="sidebar-link active ripple-surface collapsed ripple-surface-dark" 
+            data-toggle="collapse" 
+            href="#sidebar-collapse-1-0-0" 
+            role="button" 
+            aria-expanded="false" 
+            tabindex="1"
+          > 
+
+            <i class="fa fa-user"></i>
+            User Management
+            <i class="fa fa-caret-up rotate-icon" style="transform: rotate(180deg);"></i>
+          </a>
+          <ul class="sidebar-collapse collapse" id="sidebar-collapse-1-0-0" >
+            <li class="sidebar-item">
+              <a 
+                class="sidebar-link ripple-surface"
+                href="/admin/users/candidateuser/" 
+                tabindex="1"
+              >
+                Registered Candidate</a>
+            </li>
+            <li class="sidebar-item">
+              <a 
+                href="/admin/company/companyuser/" 
+                class="sidebar-link ripple-surface" 
+                tabindex="1"
+              >
+                Registered Company</a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Course List -->
+        <li class="sidebar-item">
+          <a  
+            href="{% url 'admin:stats_course_changelist'%}" 
+            role="button" 
+            
+            tabindex="1"
+          > 
+            <i class="fa fa-graduation-cap"></i>
+            Manage Courses
+          </a>
+          
+        </li>
+
+        <li class="sidebar-item">
+          <a  
+            href="{% url 'admin:company_hirecandidate_changelist'%}" 
+            role="button" 
+            
+            tabindex="1"
+          > 
+            <i class="fa fa-graduation-cap"></i>
+            Hiring Request
+          </a>
+          
+        </li>
+        
+        <li class="sidebar-item">
+          <a  
+            href="{% url 'admin:company_subscription_changelist'%}" 
+            role="button" 
+            
+            tabindex="1"
+          > 
+            <i class="fa fa-bell"></i>
+            Manage Packages
+          </a>
+          
+        </li>
+
+        <li class="sidebar-item">
+          <a  
+            href="{% url 'admin:users_skills_changelist'%}" 
+            role="button" 
+            
+            tabindex="1"
+          > 
+            <i class="fa fa-laptop"></i>
+            Manage Skills
+          </a>
+          
+        </li>
+        
+        <li class="sidebar-item">
+          <a  
+            href="{% url 'admin:ipn_paypalipn_changelist'%}" 
+            role="button" 
+            
+            tabindex="1"
+          > 
+            <i class="fa fa-money"></i>
+            Transactions
+          </a>
+          
+        </li>
+        <li class="sidebar-item">
+          <a 
+            href="stats/blog" 
+          > 
+            <i class="fa fa-cogs"></i>
+            Blogs
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a 
+            href="{% url 'admin:password_change' %}" 
+          > 
+            <i class="fa fa-cogs"></i>
+            Settings
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a 
+            href="/admin/logout/" 
+          > 
+            <i class="fa fa-sign-out"></i>
+            Logout
+          </a>
+        </li>
+        
+      </ul>
+     
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+{% endblock %}

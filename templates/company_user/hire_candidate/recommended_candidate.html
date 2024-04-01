@@ -1,0 +1,138 @@
+{% extends 'base_profile.html' %} 
+{% load static %}base_profile 
+{% block title %} Recommended  Candidate {% endblock title %} 
+{% block content %}
+{% load multifor %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Recommended Candidates</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}"> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="profileForm">
+
+      <div class="col-md-12">
+        <div class="eduDetail mt-0">
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase  text-xxs">&nbsp;</th>
+                    <th class="text-uppercase  text-xxs">Name</th>
+                    <th class="text-uppercase  text-xxs">Education Level</th>
+                    <th class="text-uppercase  text-xxs">Current Employment Status</th>
+                    <th class="text-uppercase  text-xxs">Certificates</th>
+                    <th class="text-uppercase  text-xxs">Send Request</th>
+                  </tr>
+                </thead>
+              <tbody>
+                {% for candidate in context %}
+
+                <tr>
+                  <td valign="middle"><input type="checkbox"></td>
+                  <td valign="middle">
+                    <div class="userName">
+                      <figure><img src="./images/userPic.jpg" alt=""></figure>
+                      <h4>{{ candidate.candidate_data }}</h4>
+                    </div>
+                  </td>
+                  <td valign="middle">{{ candidate.candidate_skills }}</td>
+                  <td valign="middle">{{ candidate.candidate_skills }}</td>
+                  <td class="align-middle text-center"><button class="click">Click</button></td>
+                  <td>
+                    <a href='/company/send_request' style="cursor: pointer;" class="save btn btn-primary">Send Request</a>
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+{% endblock content %} 
+{% block footer_scripts %}
+
+
+<style>
+  .pagination a.active{
+    background-color: #3A81FF;
+    color: white;
+  }
+  .pagination a:hover:not(.active) {background-color: #ddd;}
+  
+  #searchInput {
+    width: 75%;
+    font-size: larger;
+    height: 35px;
+    padding: 10px;
+    border-radius: 1px;
+    border: solid #343a40 1px;
+  }
+</style>
+
+{%endblock footer_scripts %}
+

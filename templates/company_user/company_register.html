@@ -1,0 +1,454 @@
+{% extends 'base_inner.html' %}
+{% load static %}
+
+{% block title %}
+Company Sign-In
+{% endblock title %}
+
+{% block content %}
+
+<section class="inHeader">
+	<div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+	<div class="container position-relative">
+	  <div class="row">
+		<div class="col-md-12 text-center">
+		  <h1>Company</h1>
+		  <ol class="breadcrumb">
+			<li><a href="/">Home</a></li>
+			<li class="active">Company Registration</li>
+		  </ol>
+		</div>
+	  </div>
+	</div>
+  </section>
+
+  <section class="login">
+    <div class="container forget-password">
+      <div class="row justify-content-center">
+          <div class="col-lg-7">
+            <div class="panel-body">
+              <div class="text-center">
+
+        {% include 'partials/_messages.html' %}
+
+          <h1>Company Registration</h1>
+          <p class="text-center pt-2">Fill up the information to create an account with Cyberuhuru
+          </p>
+		  <form id="company-registration" method="post" class="cnForm mt-4" role="form" action="javascript:void(0)">
+			{%if form.non_field_errors%}
+				{% for error in form.non_field_errors%}
+					<div style="color: red; font-size: 12px">{{error}}</div>
+				{%endfor%}
+			{%endif%}
+			{% csrf_token %}
+
+			<!-- Form First Row -->
+			<div class="row">
+				<div class="col-md-12 form-group mb-4">
+					<input class="form-control" id="company_name" name="company_name" placeholder="Company Name*"
+						type="text" maxlength="25" required style="display: text" />
+					<div class='error-messages'></div>
+				</div>
+			</div>
+
+			<!-- second Row -->
+			<div class="row">
+				<div class="col-md-6 form-group mb-4">
+					<input class="form-control" id="email_id" name="email_id" placeholder="Email ID*" type="email" required
+						style="display: text" />
+					<div class="error-messages"></div>
+
+				</div>
+				<div class="col-md-2 form-group mb-4 pr-md-0">
+					<select class="form-control">
+						<option>USA</option>
+						<option>IND</option>
+						<option>UAE</option>
+					</select>
+				</div>
+				<div class="col-md-4 form-group mb-4">
+					<input class="form-control" id="phone_number" name="phone_number" placeholder="Phone Number*" type="tel"
+						maxlength="10" minlength="10" required style="display: text" />
+					<div class='error-messages'></div>
+
+				</div>
+			</div>
+
+			<!-- Third Row -->
+			<div class="row">
+				<div class="col-md-12 form-group mb-4">
+					<input class="form-control" id="address" name="address" placeholder="Address Line1*" type="text"
+						required style="display: text" />
+					<div class='error-messages'></div>
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6 form-group mb-4">
+					<select class="form-control" id="industry" name="industry" required style="display: text">
+						<option>Industry*</option>
+					</select>
+					<div class='error-messages'></div>
+
+				</div>
+				<div class="col-md-6 form-group mb-4">
+					<input 
+						id="establish_at" 
+						name="establish_at" 
+						type="text"  
+						onfocus="(this.type='date')" 
+						class="form-control" 
+						required
+						style="display: text" 
+						placeholder="Establish at*"/>
+					<div class='error-messages'></div>
+
+				</div>
+			</div>
+
+			<!-- Fourth Row -->
+			<div class="row">
+				<div class="col-md-4 form-group mb-4">
+					<select id="country" name="country" required>
+						<option value="" hidden>Select Country*</option>
+						{% for country in countries %}
+						<option value="{{country.id}}">{{country.country}}</option>
+						{% endfor %}
+					</select>
+					<div class='error-messages'></div>
+
+				</div>
+				<div class="col-md-4 form-group mb-4">
+					<select id="state" name="state" required>
+						<option value="" hidden>State*</option>
+						{% for state in res.data.states %}
+						<option value="{{state.id}}">{{state}}</option>
+						{% endfor %}
+					</select>
+					<div class='error-messages'></div>
+
+				</div>
+				<div class="col-md-4 form-group mb-4">
+					<select id="city" name="city" required>
+						<option value="" hidden>city*</option>
+						{% for city in res.data.cities %}
+						<option value="{{city.id}}">{{city}}</option>
+						{% endfor %}
+					</select>
+					<div class='error-messages'></div>
+
+				</div>
+			</div>
+			<!-- Fifth Row -->
+			<div class="row">
+				<div class="form-group checkBox py-3">
+
+					<label class="align-items-center d-flex"><input type="checkbox" name="option[]" value="" id="terms_condition" checked required />Agree
+					  to the <a href=""> Terms & Conditions</a></label>
+					<label class="align-items-center d-flex"><input type="checkbox" name="option[]" value="" id="agreement_contract" checked />Agree to 5
+					  Years agreement contract<label>
+				  </div>
+			</div>
+			<!-- Sixth Row -->
+			<div class="row">
+				<div class="col-xs-12 col-md-12 form-group text-left">
+					<button id="submit_button" class="btn btn-primary pull-right" type="submit">
+						<i class="loading-icon fa fa-spinner fa-spin hide"></i>
+						<span class="btn-txt">
+							Create Account
+						</span>
+					</button>
+				</div>
+			</div>
+		</form>
+
+      </div>
+    </div>
+  
+</section>
+
+
+
+<!-- Modal -->
+<div id="welModal1" class="modal fade welcomeModal" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-body">
+				<button type="button" class="close" onclick="CloseModalPopup();" aria-label="Close">
+					<img src="{% static 'img/close.png'%}">
+				</button>
+				<div class="row">
+					<div class="col-md-8">
+						<h1 class="head">Welcome to <span>CyberUhuru</span></h1>
+					</div>
+					<div class="col-md-4">
+						<img src="{% static 'img/modal-logo.png'%}" class="img-fluid">
+					</div>
+				</div>
+				<h2 class="head">Check Your Email</h2>
+				<p class="content">Once approved by the admin, You will receive an email with the credentials to login to the website
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="loader_modal" class="modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<h1>Loading...</h1><img src="{% static 'img/modal-logo.png'%}" class="img-fluid">
+				<img id="load_img" src="{% static 'img/monkey.gif' %}" />
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock content %}
+{% block footer_scripts %}
+
+<script>
+	$(document).ready(function () {
+		function postAPI(type, url, formData, fromObj) {
+			// $('#loader_modal').modal('show');
+			$(".loading-icon").removeClass("hide")
+			$("#submit_button").attr("disabled", true)
+			$(".btn-txt").text("Loading.....")
+			$.ajax({
+				url: url,
+				method: "POST",
+				dataType: "JSON",
+				data: formData,
+				contentType: false,
+				processData: false,
+				headers: {
+					"X-CSRFToken": "{{ csrf_token }}"
+				},
+				beforeSend: function () {
+					fromObj.find(".error-message").remove();
+				},
+				success: function (res) {
+					$(".loading-icon").addClass("hide")
+					$("#submit_button").attr("disabled", false)
+					$(".btn-txt").text("Create Account")
+					// If status==True
+					if (res.status) {
+						$("span#check_email").html(res.data.email); 
+						document.getElementById('company-registration').reset();
+						// $('#loader_modal').modal('hide');
+						$('#welModal1').modal('show');
+					} 
+					// If response give error
+					else if (!$.isEmptyObject(res.errors)) { 
+						// $('#loader_modal').modal('hide');
+						// Loop to iterate errors from response
+						$.each(res.errors, function (i, v) {
+							fromObj
+								.find('input[name=' + i + ']')
+								.siblings("div")
+								.html(v.join(','));
+							fromObj
+								.find("input[name=" + i + "]")
+								.css({
+									border: "1px solid red"
+								});
+							fromObj
+								.find("input[name=" + i + "]")
+								.siblings("div")
+								.css({
+									'color': 'red',
+									'font-size': '10px'
+								});
+						});
+					} else {
+						document.getElementById('company-registration').reset();
+					}
+				},
+				complete: function () {
+					// handle
+				},
+				error: function (xhr, err) {
+					var errMsg = formatErrorMessage(xhr, err);
+				},
+			});
+		}
+
+		// On submit Check some validation and Create objects of form and call Post API
+		var signupFrom = $("#company-registration");
+		signupFrom.submit(function (event) {
+			var valid = 1;
+			if (($('#terms_condition').prop('checked') == false)) {
+				$('#terms_condition').parent().css({
+					'border': 'solid 1px red',
+					'border-radius': '5px'
+				});
+				valid = 0;
+			}
+			if (($('#agreement_contract').prop('checked') == false)) {
+				$('#agreement_contract').parent().css({
+					'border': 'solid 1px red',
+					'border-radius': '5px'
+				});
+				valid = 0;
+			}
+
+			if (($('#terms_condition').prop('checked') == true) && (($('#agreement_contract').prop('checked') ==
+				true))) {
+				$('.custom-checkbox').css({
+					'border': 'solid 1px grey',
+					'border-radius': '5px'
+				});
+				valid = 1;
+			}
+
+			if (valid == 1) {
+				var form = document.getElementById("company-registration");
+				var token = "{{csrf_token}}";
+				var formData = new FormData(form);
+				var fromObj = $("#company-registration");
+				var url = "{% url 'company_register' %}";
+				postAPI("company_register", url, formData, fromObj);
+			}
+		});
+	});
+</script>
+
+<script>
+	// Jquery/Ajax to get State data on the basis of country
+	$("#country").change(function () {
+		var thisObj = $(this).val();
+		var token = "{{csrf_token}}";
+		$.ajax({
+			url: "{% url 'state' %}",
+			data: {
+				country_id: thisObj
+			},
+			method: "POST",
+			headers: {
+				"X-CSRFToken": token
+			},
+			success: function (res) {
+				$("#state").html(res.data);
+			},
+		});
+	});
+
+	// Jquery/Ajax to get state data
+	$("#state").change(function () {
+		var thisObj = $(this).val();
+		var token = "{{csrf_token}}";
+		$.ajax({
+			url: "{% url 'city' %}",
+			data: {
+				state_id: thisObj
+			},
+			method: "POST",
+			headers: {
+				"X-CSRFToken": token
+			},
+			success: function (res) {
+				$("#city").html(res.data);
+			},
+		});
+	});
+
+	// Jquery/Ajax to Get Industry List
+	$("#industry").ready(function () {
+		var token = "{{csrf_token}}";
+		$.ajax({
+			url: "{% url 'industry' %}",
+			method: "GET",
+			success: function (res) {
+				$("#industry").html(res.data);
+			},
+		});
+	});
+
+	// Event to check Passwor and confirm Password Equal
+	$("#confirm_password").on("change", function () {
+		if ($("#password").val() == $("#confirm_password").val()) {
+			$("#confirm_password").css({
+				border: "1px solid green"
+			});
+			$("#password").css({
+				border: "1px solid green"
+			});
+			$("#message")
+				.html("Password matched")
+				.css({
+					color: "green",
+					"text-align": "left",
+					"font-size": "10px"
+				});
+		} else {
+			$("#confirm_password").css({
+				border: "1px solid red"
+			});
+			$("#password").css({
+				border: "1px solid red"
+			});
+			$("#message")
+				.html("Password does'nt matched")
+				.css({
+					color: "red",
+					"text-align": "left",
+					"font-size": "10px"
+				});
+		}
+	});
+
+	function CloseModalPopup() {
+		$("#welModal1").modal('hide');
+		location.href = "{%url 'index'%}";
+	}
+
+	// Validation for disable future dates of datepicker
+	$("#establish_at").click(function(){
+    var dtToday = new Date();
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+
+    var maxDate = year + '-' + month + '-' + day;    
+    $('#establish_at').attr('max', maxDate);
+    
+  })
+</script>
+<script>
+	const header = document.querySelector(".page-header");
+  const toggleClass = "is-sticky";
+  
+  window.addEventListener("scroll", () => {
+	const currentScroll = window.pageYOffset;
+	if (currentScroll > 150) {
+	  header.classList.add(toggleClass);
+	} else {
+	  header.classList.remove(toggleClass);
+	}
+  });
+  </script>
+  
+<style>
+	.hide{
+		display: none;
+	}
+	.modal-content{
+    background-color: black;
+    border: 4px solid white; 
+    border-radius: 35px;
+  }
+  .head{
+    color: white;
+  }
+  .content{
+    color: white;
+  }
+</style>
+
+{% endblock %}

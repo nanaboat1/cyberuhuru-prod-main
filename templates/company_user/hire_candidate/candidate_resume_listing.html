@@ -1,0 +1,335 @@
+{% extends 'base_profile.html' %} 
+{% load static %} 
+{% block title %} Hire Candidate {% endblock title %} 
+{% block content %}
+
+<section class="profile">
+  <div class="leftSidebar left">
+    <div class="menu-btn">
+      <a href="#" class="button-left"><i class="fas fa-bars"></i></a>
+    </div>
+    <ul class="lftMenu">
+      <li>
+        <a href="{% url 'company_dashboard' %}">
+          <img src="{% static 'img/das-icon.png' %}" /> Dashboard</a>
+      </li>
+      <li>
+        <a href="{% url 'company_profile' %}">
+          <img src="{% static 'img/edit.png' %}" /> Company Profile</a>
+      </li>
+      <li>
+        <a href="{% url 'monthly-subscription-view' %}" class="active" >
+          <img src="{% static 'img/certi.png' %}" />Hire Candidates</a>
+      </li>
+      <li>
+        <a href="{% url 'previous-request' %}"><img src="{% static 'img/certi.png' %}" /> Previous Requests</a>
+      </li>
+      <li>
+        <a href="{% url 'hired-candidate-list' %}"><img src="{% static 'img/Agreement.png' %}" /> Hired Candidates</a>
+      </li>
+    </ul>
+  </div>
+  <div class="rightSidebar">
+    <ul class="breadcrumb">
+      <li><a href="{% url 'monthly-subscription-view' %}">Hire candidate</a></li>
+      &nbsp; - &nbsp;
+      <li><a href="{% url 'select-technolgy-stack' %}">Technology Selection</a></li>
+      &nbsp; - &nbsp;
+      <li><a href="{% url 'skills-listing-view' %}">Skills</a></li>
+      &nbsp; - &nbsp;
+      <li>Candidate Resumes</li>
+    </ul>
+    <div class="pendingRequest">
+      <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <h2>Candidates Listing</h2>
+       
+        <div class="seacrMain">
+          <ul>
+            <li>
+              <form action="{% url 'candidate-listing-view' %}">
+                <input type="search" placeholder="Search Candidate " />
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-search"></i>
+                </button>
+              </form>
+            </li>
+            <li>
+              <select class="form-control">
+                <option>Filter</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </li>
+            <li><a class="btn btn-primary" onclick="candidateHireRequest(null, call_by='multiple_hire')">Hire</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- certificate Modal -->
+      <div class="modal fade" id="CerfificateList" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header" style="background-color: black;">
+              <h5 class="modal-title" id="exampleModalLabel" style="color: white;">Cerificates</h5>
+              <button type="button" class="close" data-dismiss="modal" style="color: red;" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+              <ul id="certificate_modal">
+              </ul>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message Modal -->
+      <div class="modal fade" id="MessageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <!-- <h5 class="modal-title" id="exampleModalLabel" style="color: white;">Message</h5> -->
+              <button type="button" class="close" data-dismiss="modal" style="color: red;" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+              <p id="message_modal">
+              </p>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Listing candidate using table -->
+      <div class="table-responsive-md">
+        <table class="table table-bordered displayResume">
+          <thead class="thead-dark">
+            <tr>
+              <th width="6%" scope="col">S.No</th>
+              <th width="27%" scope="col">Candidate Name</th>
+              <th width="29%" scope="col">Designation</th>
+              <th width="24%" scope="col">Experience</th>
+              <th width="14%" scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for  candidate in candidate_qs %}
+              <tr>
+                <td>
+                  <label>
+                    <input  
+                      name="candidate_checkbox" 
+                      type="checkbox"
+                      class="candidate_checkbox" 
+                      value="{{candidate.id}}"
+                    /> 
+                      {{ forloop.counter }} 
+                  </label>
+                </td>
+                <td>{{candidate.first_name}}</td>
+                <td>{{ candidate.current_designation }}</td>
+                <td>
+                  {% if candidate.experience_in_years > 0 %}
+                    {{ candidate.experience_in_years | stringformat:'d'}}+ Years
+                  {% else %}
+                    Fresher
+                  {% endif %}
+                </td>
+                <td align="center">
+                  
+                  <a 
+                    href="{{candidate.resume.first.resume.url}}"
+                    data-toggle="tooltip" 
+                    title="view-resume"
+                    onclick="resumeViewed()"
+                    target="_blank"
+                  >
+                    <img src="{% static 'img/view-resume.png' %}" />
+                  </a>
+                  <button
+                    title="view-certificate" 
+                    data-toggle="modal" 
+                    onclick="certificateView('{{candidate.id}}')"
+                  >
+                    <img src="{% static 'img/view-certificate.png' %}" />
+                  </button>
+                  <a 
+                    data-toggle="tooltip" 
+                    title="hire"
+                    onclick="candidateHireRequest('{{candidate.id}}', call_by='single_hire')"
+                  >
+                    <img src="{% static 'img/hire.png' %}" />
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        {% if candidate_qs.has_other_pages %}
+          <ul class="pagination">
+            {% for i in candidate_qs.paginator.page_range %}
+              {% if candidate_qs.number == i %}
+                <li class="active">
+                  <a class="active">{{ i }}
+                  </a>
+                </li>
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="newBtn">
+        {% if candidate_qs.has_previous %}
+          <a href="?page={{ candidate_qs.previous_page_number }}">
+            <img src="{% static 'img/pre-btn.png' %}" /> 
+            &nbsp; Older
+          </a>
+        {% else %}
+          <a>
+            <img src="{% static 'img/pre-btn.png' %}" /> 
+            &nbsp; Older
+          </a>
+        {% endif %}
+        {% if candidate_qs.has_next %}
+          <a href="?page={{ candidate_qs.next_page_number }}">
+            Newer &nbsp; 
+            <img src="{% static 'img/next-btn.png' %}" />
+          </a>
+        {% else %}
+          <a>
+            Newer &nbsp; 
+            <img src="{% static 'img/next-btn.png' %}" />
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %} 
+{% block footer_scripts %}
+
+<script>
+  
+  function resumeViewed(){
+    console.log("in resume viewed")
+    var url = "{% url 'candidate-listing-view' %}"
+    var method = 'POST'
+    var token = "{{csrf_token}}"
+
+    $.ajax({
+      url: url,
+      method: method,
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function(res){
+        console.log("sdfvjdkjsfghdfyghtyhvjcdjsbvdhjsfbyvugrfewghdshjju")
+      }
+    })
+  };
+
+  function candidateHireRequest(candidate_id=null, call_by){
+    console.log("candidate_id", candidate_id)
+    var candidate_ids_list = []
+    if(candidate_id){
+      candidate_ids_list.push(candidate_id)
+    }
+    else{
+      $('input[name="candidate_checkbox"]:checked').each(function() {
+       candidate_ids_list.push(this.value);
+      });
+    }
+    console.log("candidate_ids_list", candidate_ids_list)
+    $.ajax({
+      url: "{% url 'hire-candidate-request' %}",
+      method: 'POST',
+      data: {
+        candidate_ids_list: candidate_ids_list 
+      },
+      headers: {
+        "X-CSRFToken": "{{csrf_token}}"
+      },
+      success: function(res){
+        console.log(res)
+        if(res.status == true){
+          if(call_by == 'multiple_hire' ){
+            $('.candidate_checkbox').attr('checked', false)
+          }
+          $('#MessageModal').modal('show')
+          $('#message_modal').html(res.message)
+        }
+        else if(res.status == false){
+          $('#MessageModal').modal('show')
+          $('#message_modal').html(res.errors)
+          // $('#message_modal').css('{color:red}')
+        }
+      }
+    })
+  };
+
+  function certificateView(candidate_id){
+    $.ajax({
+      url: "{% url 'candidate_certificate' %}?candidate_id=" + candidate_id,
+      method: 'GET',
+      success: function(res){
+        if(res){
+          var certificates = res.certificates;
+          $('#certificate_modal').html("")
+          if(certificates.length > 0){
+            console.log("certificates", certificates)
+            for(var i=0; i<certificates.length; i++){
+              console.log("i", i)
+              console.log("certificates[i].certificate_image", certificates[i]['certificate_image'])
+              $('#certificate_modal').append(
+                "<li>" + 
+                  "<div class='card' style='width: 18rem;'>" + 
+                    "<img id='getPDF' class='card-img-top' src='"+ "/media/" + certificates[i].certificate_image + "'>" + 
+                    "<div class='card-body' style='text-align:center; font-style: italic;'>" +
+                      "<p class='card-text'>" +
+                        certificates[i].course_title + 
+                      "</p>" + 
+                    "</div>" + 
+                  "</div>" + 
+                "</li>"      
+              )
+            }
+          }
+          else{
+            $('#certificate_modal').append("<p> Not Certified....</p>")
+          }
+          $('#CerfificateList').modal('show')
+        }
+      }
+    })
+  };
+
+</script>
+
+<style>
+  .pagination a.active{
+    background-color: #3A81FF;
+    color: white;
+  }
+  .pagination a:hover:not(.active) {background-color: #ddd;}
+</style>
+
+{%endblock footer_scripts %}

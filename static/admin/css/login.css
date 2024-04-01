@@ -1,0 +1,94 @@
+/* LOGIN FORM */
+
+body.login {
+    background: #f8f8f8;
+}
+
+.login #header {
+    height: auto;
+    padding: 15px 16px;
+    justify-content: center;
+}
+
+.login #header h1 {
+    font-size: 18px;
+}
+
+.login #header h1 a {
+    color: #fff;
+}
+
+.login #content {
+    padding: 20px 20px;
+    background: #000000;
+}
+
+.login #container {
+    background: #fff;
+    border: 3px solid #0f5ba9;
+    border-radius: 7px;
+    overflow: hidden;
+    width: 40em;
+    min-width: 300px;
+    margin: 100px auto;
+}
+
+.login #content-main {
+    width: 100%;
+}
+
+.login .form-row {
+    padding: 4px 0;
+    float: left;
+    width: 100%;
+    border-bottom: none;
+}
+
+.login .form-row label {
+    padding-right: 0.5em;
+    line-height: 2em;
+    font-size: 1em;
+    clear: both;
+    color: #fff;
+}
+
+.login .form-row #id_username, .login .form-row #id_password {
+    clear: both;
+    padding: 8px;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+.login span.help {
+    font-size: 10px;
+    display: block;
+}
+
+.login .submit-row {
+    clear: both;
+    padding:0;
+    margin: 0;
+    border: none;
+    background: none;
+    text-align: left;
+}
+
+.login .password-reset-link {
+    text-align: center;
+}
+
+.logincontainer h2 {
+    text-align: center;
+    color: #fff;
+}
+.logincontainer figure img {
+    width: 235px;
+}
+.logincontainer figure{margin-bottom:20px;}
+.submit-row input{display: inline-block;padding:0px;margin:10px 0 30px;background: rgb(43, 74, 131);background: linear-gradient(90deg, rgb(52,47,128) 0%, rgba(34,94,231,1) 100%);font-size: 19px;min-width:100%;text-align: center;height: 46px;line-height: 46px;color: #fff;border-radius: 25px;border: none;}
+.submit-row input:hover{background: rgb(58, 125, 250);background: linear-gradient(90deg, rgba(58,125,250,1) 0%, rgb(24, 159, 222) 100%);}
+
+.submit-row button{display: inline-block;padding:0px;margin:10px 0 30px;background: rgb(43, 74, 131);background: linear-gradient(90deg, rgb(52,47,128) 0%, rgba(34,94,231,1) 100%);font-size: 19px;min-width:100%;text-align: center;height: 46px;line-height: 46px;color: #fff;border-radius: 25px;border: none;}
+.submit-row button:hover{background: rgb(58, 125, 250);background: linear-gradient(90deg, rgba(58,125,250,1) 0%, rgb(24, 159, 222) 100%);}

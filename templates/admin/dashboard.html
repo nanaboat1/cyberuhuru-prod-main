@@ -1,0 +1,89 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-item-content">
+    <ul>
+        <li>
+            <span class="float-right">
+                {{ total_user }}
+            </span>
+            Total Users
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_customer_user }}
+            </span>
+            Total Customer Users
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_vendor_user }}
+            </span>
+            Total Vendor Users
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_paid_customer_user }}
+            </span>
+            Total Paid Customer Users
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_paid_vendor_user }}
+            </span>
+            Total Paid Vendor Users
+        </li>
+        <li>
+            <span class="float-right">
+                {{ monthly_user }}
+            </span>
+            Monthly Subscribed Users
+        </li>
+        <li>
+            <span class="float-right">
+                {{ annually_user }}
+            </span>
+            Annually Subscribed Users
+        </li>
+    </ul>
+    </div>
+    <br>
+   <div class="dashboard-item-content">
+    <ul>
+        <li class="contrast">
+            Messages
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_message }}
+            </span>
+            Total Messages Transacted
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_message_sent }}
+            </span>
+            Total Messages Sent
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_message_recieved }}
+            </span>
+            Total Messages Recieved
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_mailbox }}
+            </span>
+            Total Mailbox
+        </li>
+        <li>
+            <span class="float-right">
+                {{ total_attachment }}
+            </span>
+            Total Attachments
+        </li>
+    </ul>
+</div>
+<br>
+{% endblock %}

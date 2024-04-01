@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <div>
+            <h1>
+                Registered users
+            </h1>
+            <div class="totalBox">
+                {% load trip_tags %}
+                {% dashboard_list request as queries %}
+                <h2>Total Candidate<span>{{queries.total_candidate_user}}{{custom_app_list}}</span></h2>
+            </div>
+            <div class="totalBox grn">
+                <h2>Total Company <span>{{queries.total_company_user}}</span></h2>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h1>
+            Subscribed companies
+        </h1>
+        <div class="totalBox">
+            {% load trip_tags %}
+            {% dashboard_list request as queries %}
+            <h2>Total Subscription<span>{{queries.total_subscribed_company}}</span></h2>
+        </div>
+    </div>
+    <div>
+        <h1>
+            Revenue
+        </h1>
+        <div class="totalBox">
+            {% load trip_tags %}
+            {% dashboard_list request as queries %}
+            <h2>Subscription Revenue<span>${{queries.subscription_revenue}}</span></h2>
+        </div>
+        <div class="totalBox grn">
+            {% load trip_tags %}
+            {% dashboard_list request as queries %}
+            <h2>Hiring revenue<span>${{queries.hiring_revenue}}</span></h2>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base_profile.html' %}
+
+{% load static %}
+
+{% block title %} Payment-done{% endblock title %}
+
+{% block content %}
+<section class="inHeader">
+    <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+    <div class="container position-relative">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>Company</h1>
+          <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li class="active">Payment Cancel</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+<section class="profile pt-5 pb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="trainingBox" style="margin-bottom: 0px;">
+                    <div class="subMain" style="text-align: center; padding: 120px 0;">
+                        <div class="subBox" style="background: white; box-shadow: 0 0 32px #6fc067">
+                            <h1 style="border-bottom: none; color: #77b43e; font-size: 32px;">Payment Success</h1>
+                            <img src="{% static 'img/check-circle.gif' %}" alt="Card image cap" style="width: 164px;">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

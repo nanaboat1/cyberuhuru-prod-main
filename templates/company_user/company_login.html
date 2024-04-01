@@ -1,0 +1,288 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- favicon icon -->
+    <link rel="icon" href="{% static 'latest_ui/images/favicon.ico' %}">
+    <!-- Title of website -->
+    <title></title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'latest_ui/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom Fonts CSS -->
+    <link href="{% static 'latest_ui/css/fonts.css' %}" rel="stylesheet" type="text/css">
+    <!-- slider CSS -->
+    <link href="{% static 'latest_ui/css/owl.carousel.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'latest_ui/css/owl.theme.default.min.css' %}" rel="stylesheet" type="text/css">
+    <!-- Custom CSS -->
+    <link href="{% static 'latest_ui/css/style.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'latest_ui/css/menu.css' %}" rel="stylesheet" type="text/css">
+</head>
+<body>
+<!-- Header -->
+<header class="page-header">
+    <!-- logoBar -->
+    <div class="logoBar">
+        <div class="container">
+            <div class="row align-items-center">
+                <aside class="col-lg-3 col-md-3 col-6"> <a href="#" class="logo" title="Bybee PC">CyberUhuru </a> </aside>
+                <aside class="col-lg-9 col-md-9 col-6 d-flex align-items-center justify-content-end">
+                    <div class="siteMenus">
+						<ul>
+							<li><a href="/" class="active">Home</a></li>
+							<li><a href="/about">About Us</a></li>
+							<li><a href="/company/login/">For Companies </a></li>
+							<li><a href="/login">For Candidate </a></li>
+							<li><a href="/blog">Blog</a></li>
+							
+						  </ul>
+                    </div>
+                    <ul class="becomeBtn d-none d-lg-inline-flex">
+                        <li><a href="">Create Your Profile </a></li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="inHeader">
+    <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+    <div class="container position-relative">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1>Company Login</h1>
+                <ol class="breadcrumb">
+                    <li><a href="/">Home</a></li>
+                    <li class="active">Login</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="login">
+    <div class="container forget-password">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <img src="{% static 'latest_ui/images/login-logo.png' %}" alt="car-key" border="0" class="d-none">
+                        <h2 class="text-center">Sign in to our platform</h2>
+                        <form id="contact" method="post" class="cnForm mt-4" role="form">
+                          {% csrf_token %}
+                          <div class="row">
+                            {% if form.non_field_errors %}
+                              {% for error in form.non_field_errors %}
+                              <div style="color:red; font-size: 12px"> {{error}} </div>
+                              {% endfor %}
+                            {% endif %} 
+                            <div class="col-md-12 form-group mb-4">
+                              <input 
+                                class="form-control" 
+                                id="email_id" 
+                                name="email_id" 
+                                placeholder="Enter Email Address*"
+                                type="email" 
+                                required 
+                                style='display: text;' 
+                              />
+                            </div>
+                            <div class="col-md-12 form-group mb-4">
+                              <input 
+                                class="form-control" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Password*" 
+                                type="password"
+                                required 
+                                style='display: text;' 
+                              />
+                            </div>
+              
+                            <!-- Forgot password Button -->
+                            <div class="col-md-12 form-group mb-4">
+                              <ul class="remember" style="justify-content: flex-end;">
+                                <li><a href="{% url 'company_forgot_password' %} ">Forgot Password?</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                          <!-- Login / Signup buttons -->
+                          <div class="row">
+                            <div class="col-xs-12 col-md-12 form-group">
+                              <button class="btn btn-primary pull-right" type="submit">Login</button>
+                            </div>
+                            <div class="col-md-12">
+                              <p class="signUp"><span></span>Not registerd? <a href="{% url 'company_register'%}">Create account</a>
+                              </p>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<footer>
+  <div class="container">
+    <div class="mainFoot">
+    <div class="ftAbout">
+      <img src={% static "latest_ui/images/logo.png"%} alt="">
+      <p>Smart and fast product to help you meet your clients' needs.</p>
+      <ul class="socialMedia">
+        <li><a href=""><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href=""><i class="fab fa-instagram"></i></a></li>
+        <li><a href=""><i class="fab fa-youtube"></i></a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="">Solutions</a></li>
+        <li><a href="">Features</a></li>
+        <li><a href="">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="">About Us</a></li>
+        <li><a href="">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Support</h5>
+      <ul>
+        <li><a href="">Help Center</a></li>
+        <li><a href="">Developers</a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="">Terms & Conditions</a></li>
+        <li><a href="">Privacy policy</a></li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</footer>
+<!-- jQuery library --> 
+<script src={% static "latest_ui/js/jquery.min.js"%} type="text/javascript"></script> 
+<!-- Bootstrap core JS --> 
+<script src={% static "latest_ui/js/bootstrap.min.js"%} type="text/javascript"></script> 
+<script src={% static "latest_ui/js/popper.min.js"%} type="text/javascript"></script> 
+<!-- jQuery for menu --> 
+<script type="text/javascript" src={% static "latest_ui/js/menu.js"%}></script> 
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+jQuery('.siteMenus').stellarNav({
+breakpoint:767,
+position: 'right',
+});
+});
+</script> 
+<!-- slider Top --> 
+<script type="text/javascript" src={% static "latest_ui/js/owl.carousel.js" %}></script> 
+<script>
+    $(document).ready(function() {
+	  $("#banner-slider").owlCarousel({
+    items : 1,
+	  nav:false,
+	  dots:true,
+	  loop:true,
+	  autoplay:true,
+	  autoplayTimeout:3000,
+	  autoplayHoverPause:true
+      });
+    });
+</script> 
+<script>
+    $(document).ready(function() {
+	  $("#project").owlCarousel({
+      items : 1,
+	  nav:true,
+	  dots:true,
+	  loop:true,
+	  autoplay:true,
+	  autoplayTimeout:3000,
+	  // animateIn:'fadeIn',
+   //    animateOut:'fadeOut',
+	  autoplayHoverPause:true
+      });
+    });
+</script> 
+
+<script>
+  jQuery(document).ready(function($) {
+			
+			$('.client-say').owlCarousel({
+				items: 1,
+				loop: true,
+				margin: 0,
+				autoplay:true,
+				autoplayTimeout:3000,
+				nav: false,
+				dots: true,
+				autoHeight: true,
+				responsiveClass:true
+			});
+
+    });
+</script>
+
+<script>
+  const header = document.querySelector(".page-header");
+const toggleClass = "is-sticky";
+
+window.addEventListener("scroll", () => {
+  const currentScroll = window.pageYOffset;
+  if (currentScroll > 150) {
+    header.classList.add(toggleClass);
+  } else {
+    header.classList.remove(toggleClass);
+  }
+});
+
+</script>
+<script>
+  $('#calender').owlCarousel({        
+    loop:true,
+    margin:30, 
+    dots:false,
+    nav:true,       
+    autoplay: true,
+		singleItem:true,
+		navText: ["<i class='fa fa-angle-left'></i>","<i class='fa fa-angle-right'></i>"],
+        responsiveClass:true,
+        responsive:{
+            0:{                        
+                items:1,
+                
+            },
+            400:{                       
+                items:1,
+                
+            },
+            768:{                      
+                items:2,
+                
+            },
+            1000:{                           
+                items:3,
+                
+            },
+            1400:{
+                items:3,
+               
+            }            
+        }
+    });
+</script>
+</body>
+</html>

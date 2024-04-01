@@ -1,0 +1,130 @@
+{% extends 'base_profile.html' %}
+
+{% load static %} 
+
+{% block title %} Courses List {%endblock title %} 
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Profile</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Course List</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+<div>
+  <section class="profile pt-5 pb-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <ul class="skilBtn">
+            {% comment %}
+            <li><a href="#">Select Skills</a></li>
+            <li><a href="#">Recommendation Courses </a></li>
+            {% endcomment %}
+          </ul>
+          <div class="trainingBox">
+            <h1>Courses</h1>
+            <div class="skiilBox reco_training">
+              <div class="demo6" data-simplebar>
+                {% for course in course %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div>
+                      <video
+                        controls
+                        id="{{course.id}}"
+                       {% if course.thumbnail %}
+                          poster="{{course.thumbnail.url}}"
+                        {% else %}
+                          poster="{% static 'img/img-1.jpg' %}"
+                        {% endif %}
+                        style="width: 100%; height: auto; vertical-align: middle;"
+                      >
+                        <source src="{{course.video_url}}" type="video/mp4"/>
+                      </video>
+                    </div>
+                   
+                    <div class="videoDt">
+                      <p>
+                        <i class="far fa-calendar-alt"></i> {{course.updated_at}}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-md-8 sort-dis" style="text-align:justify;">
+                    <strong><h3>{{course.course_title}}</h3></strong>
+                    <p>{{course.course_content|safe}}</p>
+                    <div class="loginBtn">
+                     <button class="btn btn-primary" style="border-radius: 20px">
+                        <a href= {% url 'course_detail' course.id%} style="color: white">
+                          View Course
+                        </a>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <hr />
+                {% endfor %} {% comment %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <iframe
+                      width="560"
+                      height="315"
+                      src="https://www.youtube.com/embed/qqRLBSwhFk4?start=8"
+                      title="YouTube video player"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                            gyroscope; picture-in-picture"
+                      allowfullscreen
+                    ></iframe>
+                    <div class="videoDt">
+                      <h2>Cybersecurity CISO certification</h2>
+                      <p><i class="far fa-calendar-alt"></i> 29/12/2020</p>
+                    </div>
+                  </div>
+                  <div class="col-md-8 sort-dis">
+                    <h3>Short description</h3>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Nulla quam velit, vulputate eu pharetra nec, mattis ac
+                      neque. Duis vulputate commodo lectus, ac blandit elit
+                      tincidunt id. Sed rhoncus, tortor sed eleifend tristique,
+                      tortor mauris molestie elit, et lacinia ipsum quam nec
+                      dui. Quisque nec mauris sit amet elit iaculis pretium sit
+                      amet quis magna. Aenean velit odio, elementum in tempus
+                      ut, vehicula eu diam. Pellentesque rhoncus aliquam mattis.
+                      Ut vulputate eros sed felis sodales nec
+                    </p>
+                  </div>
+                </div>
+                {% endcomment %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock content %}
+
+
+<script>
+  var obj = document.querySelector('video');
+  console.log("obj====>", obj)
+  console.log(obj.controls = true)
+  var video = document.querySelector("video");
+  var timeRangesObject = video.seekable;
+  var timeRanges = [];
+  //Go through the object and output an array
+  for (let count = 0; count < timeRangesObject.length; count ++) {
+      timeRanges.push([timeRangesObject.start(count), timeRangesObject.end(count)]);
+  }
+</script>

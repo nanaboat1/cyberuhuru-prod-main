@@ -1,0 +1,36 @@
+{% extends 'base_inner.html' %}
+
+{% load static %} 
+
+{% block title %} About Us {% endblock title %}
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>About Us</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">About Us</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="profileForm">
+	<div class="container">
+  {% for about in about %}
+     <h3><span>{{about.title}}</span></h3>
+
+    
+		{% comment %} <figure><img src="{% static "img/about.jpg"%}" class="img-fluid float-right"></figure> {% endcomment %}
+    {{about.content|safe}}
+	</div>
+</section>
+
+  {% endfor %}
+
+{% endblock content %}

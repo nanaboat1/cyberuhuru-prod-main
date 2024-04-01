@@ -1,0 +1,63 @@
+{% extends 'base_inner.html' %}
+
+{% load static %} 
+
+{% block title %} Search List {% endblock title %}
+
+{% block content %}
+
+{% comment %} <section class="pageBanner position-relative">
+  <img src="{% static "img/page-banner.jpg"%}" class="img-fluid w-100" alt=""/>
+  <div class="pageCaption">
+    <div class="container">
+      <h1>Search</h1>
+      <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+          <li class="breadcrumb-item active">Search List</li>
+      </ul>
+    </div>
+  </div>
+</section> {% endcomment %}
+
+<section class="abtContent">
+	<div class="container">
+        {% if searched %}
+        <h1>You Searched for...{{searched}}</h1>
+        <hr/>
+        <br/>
+        <table class="table table-hover table-striped">
+          {% if course_List %}
+            {% for course in course_List  %}
+              <tr>
+                <td>
+                  <a href="{% url  'course_detail' course.id %}">
+                    {{course.course_title}}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td>No Content Found </td></tr>
+          {% endif %}
+        </table>
+        {% else %}
+            <h1>Hey You Forget to Type Something... ;-></h1>
+        {% endif %}
+        <h2> </h2>
+	</div>
+</section>
+
+<style>
+  
+table, th, td {
+  border-collapse: collapse;   
+}
+/* setting the text-align property to center*/
+ td {
+  padding: 5px;
+  text-align:center;
+        
+}
+</style>
+
+{% endblock content %}

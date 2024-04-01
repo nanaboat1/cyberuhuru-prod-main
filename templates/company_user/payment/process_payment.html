@@ -1,0 +1,40 @@
+{% extends 'base_profile.html' %}
+
+{% load static %}
+
+{% block title %} Payment Process {% endblock title %}
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Payment process</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="profile pt-5 pb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="trainingBox" style="margin-bottom: 0px;">
+          <div class="subMain" style="text-align: center; padding: 120px 0;">
+            <div class="subBox" style="background: white; box-shadow: 0 0 32px #f8c43a">
+              <img class="card-img-top" src="{{request.get_absolute_url}}{% static 'img/paypal-final.png'%}"
+                alt="Card image cap" style="width: 164px;">
+              <div style="text-align: center; margin-top: 10px">{{ form.render }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,203 @@
+{% extends 'base_profile.html' %}
+
+{% load static %}
+
+{% block title %} Course Details {% endblock title %}
+
+{% block content %}
+
+<section class="profile pt-5 pb-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+
+				<div class="trainingBox">
+					<h1>Course Detail</h1>
+					<div class="skiilBox reco_training">
+						<div class="row">
+							<div class="col-md-6">
+								<div>
+									<video 
+										id="{{course_id}}" 
+										controls
+										{% if course.thumbnail %}
+											poster="{{course.thumbnail.url}}"
+										{% else %}
+											poster="{% static 'img/img-1.jpg' %}"
+										{% endif %}
+										style="max-width:100%; max-height: 100%; vertical-align: middle;">
+										<source src="{{course_vid}}" type="video/mp4" />
+									</video>
+								</div>
+							</div>
+							<div class="col-md-6 sort-dis" style="text-align:justify;">
+								<div class="videoDt">
+									<h2>{{course_title}}</h2>
+									<p><i class="far fa-calendar-alt"></i>{{course_created_at}}</p>
+								</div>
+								<h3>Short Description </h3>
+								<p>{{course_content|safe}}</p>
+								<hr>
+							</div>
+						</div>
+					</div>
+				</div>
+				<h2 class="chapTitle">All Chapters</h2>
+				{% for chapter in course_chapters %}
+				<div class="courseList" >
+					<div class="row">
+						<div class="col-md-6" style="text-align:justify;">
+							<ul class="courseDate">
+								<li>Chapter: <span> {{chapter.title}}</span></li>
+								<li>Dated: <span> {{chapter.updated_at}}</span></li>
+								<li>Duration: 
+									<span
+										style="color:#0081ff; margin-left: 16%;">	{{chapter.duration}} hrs</span>
+								
+								</li>
+							</ul>
+							<ul class="">
+								<li><strong>Description:</strong><br />
+									<span style="color: #707070;
+										font-weight: 400;
+										padding-top: 5px;">{{chapter.content|safe}}
+									</span>
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-6">
+							<div>
+								<video 
+					
+									id="chapter{{chapter.id}}"
+									name="courseVideo"
+									controls
+									style="max-width:450px; max-height: 250px;" 	
+									ontimeupdate="videoTimeUpdate(this,'{{chapter.id}}')"
+								>
+								<source src="{{chapter.video_url}}" type="video/mp4" />
+								<source src="{{chapter.video_url}}" type="video/webm" />
+								<source src="{{chapter.video_url}}" type="video/ogg" />
+									
+								</video>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</section>
+
+{% endblock content %}
+{% block video_footer_script %}
+
+<script>
+	/* mapping the video duration on basis Video id */
+	var vid = document.getElementsByName("courseVideo");
+	var length = 0
+	for (let i = length; i < vid.length; i++) {
+		setTimeout(function () {
+			var vidDu = vid[i].duration
+			var temp = document.getElementById(i + 1)
+			temp.innerHTML = parseInt(vidDu / 60)
+		}, 800);
+	}
+	var videos = document.querySelectorAll('video');
+		for(var i=0; i<videos.length; i++)
+			videos[i].addEventListener('play', function(){pauseAll(this)}, true);
+
+	//  On video time update
+	function videoTimeUpdate(event, episode_id) {
+		var episode_id = episode_id
+		var myPlayer = document.getElementById(event.id)
+		var full_url = document.URL;
+		var course_id = full_url.substring(full_url.lastIndexOf('/') + 1);
+		var percentageCompleted = 0;
+		var videoStarted, videoTwentyFive, videoFifty, videoSeventyFive, videoComplete = false;
+		var perc = getPercentage()
+
+		// check percentage of video completion
+		function getPercentage() {
+			percentageCompleted = Math.floor((myPlayer.currentTime / myPlayer.duration) * 100);	
+			// is 25
+			if ((!videoTwentyFive) && (percentageCompleted > 25) && (percentageCompleted < 30)) {
+				videoTwentyFive = true
+				updateTimeInDb(course_id, percentageCompleted)	
+			}
+			// is 50
+			else if ((!videoFifty) && (percentageCompleted > 50) && (percentageCompleted < 55)) {
+				videoFifty = true
+				updateTimeInDb(course_id, percentageCompleted)
+			}
+			// is 75
+			else if ((!videoSeventyFive) && (percentageCompleted > 75) && (percentageCompleted < 80)) {
+				videoSeventyFive =true
+				updateTimeInDb(course_id, percentageCompleted)
+			}
+			// is 100
+			else if ((!videoComplete) && ((percentageCompleted > 99) && (percentageCompleted <= 100))) {
+				videoComplete = true;
+				updateTimeInDb(course_id, percentageCompleted)
+			}
+			else{
+				console.log("in else part")
+			}
+		}
+		function updateTimeInDb(course_id, percentage){
+			$.ajax({
+				url: "{% url 'training_episode' %}",
+				data: {course_id: "{{course_id}}", episode_id: episode_id, current_time:percentage},
+				method: "POST",
+				headers: { "X-CSRFToken": "{{csrf_token}}" },
+				success: function (res) {
+					console.log(res)
+					// data = JSON.parse(res.data)
+					}
+			})
+		}
+	}
+	
+	// pause all video except current
+	function pauseAll(elem){
+		for(var i=0; i<videos.length; i++){
+			//Is this the one we want to play?
+			if(videos[i] == elem) continue;
+			//Have we already played it && is it already paused?
+			if(videos[i].played.length > 0 && !videos[i].paused){
+			// Then pause it now
+			videos[i].pause();
+			}
+		}
+	}
+
+	$(document).ready(function () {
+		//  ajax to get list of video that was added in training of particular course
+		$.ajax({
+			url: "{% url 'training_episode' %}" + "?course_id=" + "{{course_id}}"  ,
+			method: "GET",
+			headers: { "X-CSRFToken": "{{csrf_token}}" },
+			success: function (res) {
+				if (res.success && res.data){
+					var data = JSON.parse(res.data)
+					for( var i = 0; i < data.length; i++ ){
+						const iterate_value = i
+						const doc = document.getElementById('chapter' + data[iterate_value].fields.episode)
+						setTimeout(doc.addEventListener('loadedmetadata', function(){
+							// console.log("this.duration", this.duration)
+							// console.log("data[iterate_value].fields.progress_percentage", data[iterate_value].fields.progress_percentage)
+							console.log("iterate_value", iterate_value, Math.floor((this.duration * data[iterate_value].fields.progress_percentage)/100))
+							this.currentTime = Math.floor((this.duration * data[iterate_value].fields.progress_percentage)/100)
+							console.log("this.......................",this, this.currentTime)
+						}, true), 10000);
+							
+					}
+				}	
+			}
+		})
+	})
+	
+</script>
+
+{% endblock video_footer_script %}

@@ -1,0 +1,93 @@
+{% load static %}
+
+<div class="container1">
+  <div class="row align-items-center no-gutters">
+    <div class="col-md-6 col-lg-6 text-center"> <a href="/" class="logo"><img src="{% static 'img/logo2.png'%}"
+          class="img-fluid"></a> </div>
+    <div class="col-md-6 col-lg-6">
+
+      <div class="slidBnr">
+        <div class="slidBox">
+          <div id="bannerSlider" class="owl-carousel owl-theme">
+            {% for home in home %}
+            <div class="item">
+              <img src="{% static 'img/slider1.jpg'%}" class="img-fluid">
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<div class="mainMenu">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-5 col-lg-7">
+        <div class="stellarnav">
+          <ul>
+            {% if template_name == "stats/index.html" %}
+            <li><a href="#specalCyber">Courses</a></li>
+            {% else %}
+            <li><a href={% url 'course'%}>Courses</a></li>
+            {% endif %}
+            <li><a id="hiring" href="#banner2">Hiring Process</a></li>
+            <li><a href={% url 'certificate'%}>Certification</a></li>
+            <li><a href={% url 'about'%}>About</a></li>
+            <li><a href={% url 'contact'%}>Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-7 col-lg-5 d-flex align-items-center justify-content-end flex-wrap">
+        {% if user.is_authenticated %}
+        <div class="loginBtn">
+          <div class="welcome">
+            <a href="#demo" data-toggle="collapse" class="profileImg d-flex align-items-center text-dark">
+              {% if user.is_candidate_user %}
+                    <div class="userName"> {{user.first_name}} {{user.last_name}}</div>
+                  {% else %}
+                    <div class="userName"> {{user.company_user.first.company_name}}</div>
+                  {% endif %}
+              {% if user.profile_photo %}
+              <figure class="mb-0 ml-2"><img id='header-pic' class="rounded-circle" src="{{user.profile_photo.url}}"
+                  width=45 height=45></figure>
+              {% else %}
+              <figure class="mb-0 ml-2"><img class="rounded-circle" src="{% static 'img/user2.png'%}" width=45
+                  height=45> </figure>
+              {% endif %}
+            </a>
+            <div class="userProfile_2">
+              <div id="demo" class="collapse menuList">
+                <ul>
+                {% if user.is_company_user %}
+                  <li><a href="{% url 'company_profile' %}">Profile</a></li>
+                {% else %}
+                  <li><a href="{% url 'profile' %}">Profile</a></li>
+                {% endif %}
+                  <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="loginBtn">
+          <button><a href="{% url 'user_sign_in' %}" style="color: white">Candidate Login</a></button>
+          <button><a href="{% url 'company_login' %}" style="color: white">Company Login</a></button>
+        </div>
+        {% endif %}
+        <div class="menuSerch">
+          <a class="searchBtn" href="#" id="toggle-search"><i class="fas fa-search"></i></a>
+          <form class="d-flex" method="POST" action="{% url 'search' %}">
+            {% csrf_token %}
+            <input style='display:none; text-align: right; margin-top: 10%;' id='searchBar' name='searched'
+              type='search' placeholder='Search&hellip;'>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,18 @@
+{% load i18n %}
+{% if app_list %}
+	{% for app in app_list %}
+		<li class="treeview app-{{ app.app_label }}">
+			<a href="#">
+				<i class="fa fa-desktop" aria-hidden="true"></i> <span>{{ app.name }}</span>
+				<span class="pull-right-container">
+				  <i class="fa fa-angle-left pull-right"></i>
+				</span>
+			</a>
+			<ul class="treeview-menu">
+				{% for model in app.models %}
+						<li><a href="{{ model.admin_url }}"><i class="fa fa-circle-o"></i> {{ model.name }}</a></li>
+				{% endfor %}
+			</ul>
+		</li>
+	{% endfor %}
+{% endif %}

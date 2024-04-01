@@ -1,0 +1,403 @@
+{% extends 'base_inner.html' %}
+
+{% load static %}
+
+{% block title %} Candidate Sign-In {% endblock title %}
+
+{% block content %}
+
+
+<section class="inHeader">
+	<div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+	<div class="container position-relative">
+	  <div class="row">
+		<div class="col-md-12 text-center">
+		  <h1>Candidate</h1>
+		  <ol class="breadcrumb">
+        {% include 'partials/_messages.html' %} 
+
+			<li><a href="/">Home</a></li>
+			<li class="active">Candidate Registration</li>
+		  </ol>
+		</div>
+	  </div>
+	</div>
+  </section>
+
+  <section class="login">
+    <div class="container forget-password">
+      <div class="row justify-content-center">
+          <div class="col-lg-7">
+            <div class="panel-body">
+              <div class="text-center">
+
+        {% include 'partials/_messages.html' %}
+
+          <h1>Candidate Register</h1>
+          <p class="text-center pt-2">
+            Cybersecurity most featured courses that every cybersecurity
+            <br />professional should learn.
+          </p>
+          <form id="contact" method="post" class="cnForm mt-4" role="form" action="javascript:void(0)">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6 form-group mb-4">
+                <input class="form-control" id="first_name" name="first_name" placeholder="First Name*" maxlength="25"
+                  type="text" required style='display: text;' />
+                <div class="error-messages"></div>
+              </div>
+              <div class="col-md-6 form-group mb-4">
+                <input class="form-control" id="last_name" name="last_name" maxlength="25" placeholder="Last Name*"
+                  type="text" required style='display: text;' />
+                <div class="error-messages"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group mb-4">
+                <input class="form-control" id="email_id" name="email_id" placeholder="Email ID*" maxlength="30"
+                  type="email" required style='display: text;' />
+                <div class="error-messages"></div>
+              </div>
+              <div class="col-md-2 form-group mb-4 pr-md-0">
+                <select class="form-control">
+                  <option>USA</option>
+                  <option>IND</option>
+                  <option>UAE</option>
+                </select>
+              </div>
+              <div class="col-md-4 form-group mb-4">
+                <input class="form-control" id="phone_number" type="tel" name="phone_number" placeholder="Phone number*"
+                  maxlength="10" minlength="10" required style='display: text;' />
+                <div class="error-messages"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 form-group mb-4">
+                <input class="form-control" id="" name="address" placeholder="Address Line 1" type="text" />
+                <div class="error-messages"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 form-group mb-4">
+                <select id="country" name="country" required>
+                  <option value="">Select Country*</option>
+                  {% for country in countries %}
+                  <option value="{{country.id}}">
+                    {{country.country}}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4 form-group mb-4">
+                <select id="state" name="state" required>
+                  <option>State*</option>
+                  {% for state in res.data.states %}
+                  <option value="{{state.id}}">{{state}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4 form-group mb-4">
+                <select id="city" , name="city" required>
+                  <option>City*</option>
+                  {% for city in res.data.cities %}
+                  <option>{{city}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group mb-4">
+                <input class="form-control" id="password" name="password" placeholder="Password*" type="password"
+                  minlength="8" required style='display:text;' />
+                <div class="error-messages"></div>
+              </div>
+              <div class="col-md-6 form-group mb-4">
+                <input class="form-control" id="confirm_password" name="confirm_password"
+                  placeholder="Confirm Password*" type="password" minlength="8" required style='display:text;' />
+                <span id="message"></span>
+                <div class="error-messages"></div>
+              </div>
+            </div>
+            <div class="form-group checkBox py-3">
+
+              <label class="align-items-center d-flex"><input type="checkbox" name="option[]" value="" id="terms_condition" checked required />Agree
+                to the <a href=""> Terms & Conditions</a></label>
+              <label class="align-items-center d-flex"><input type="checkbox" name="option[]" value="" id="agreement_contract" checked />Agree to 5
+                Years agreement contract<label>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 col-md-12 form-group mb-4 text-left">
+                <button id="submit_button" class="btn btn-primary pull-right" type="submit">
+                  <i class="loading-icon fa fa-spinner fa-spin hide"></i>
+                  <span class="btn-txt">
+                    Create Account
+                  </span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+      </div>
+    </div>
+  
+</section>
+<!-- Modal -->
+<div id="welModal1" class="modal fade welcomeModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" onclick="CloseModalPopup();" aria-label="Close"><img
+            src="{% static 'img/close.png'%}"></button>
+        <div class="row">
+          <div class="col-md-8">
+            <h1 class="head">Welcome to 
+              <span>CyberUhuru</span>
+            </h1>
+          </div>
+          <div class="col-md-4">
+            <img src="{% static 'img/logo2.png'%}" class="img-fluid">
+          </div>
+        </div>
+        <h2 class="head">Check Your Email</h2>
+        <p class="content">We've emailed<span id="check_email"></span> you instructions for Activate your account. If an account exists with the email you have
+          entered, you will receive shortly. If you don't receive an email, please make sure you've the access
+          credentials of the mail id you have entered and also check your spam folder.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="loader_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h1>Loading...</h1><img src="{% static 'img/modal-logo.png'%}" class="img-fluid">
+        <img id="load_img" src="{% static 'img/monkey.gif' %}" />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block footer_scripts %}
+<script>
+  $(document).ready(function () {
+    function postAPI(type, url, formData, fromObj) {
+      $(".loading-icon").removeClass("hide")
+      $("#submit_button").attr("disabled", true)
+      $(".btn-txt").text("Loading.....")
+
+      $.ajax({
+        url: url,
+        method: "POST",
+        dataType: "JSON",
+        data: formData,
+        contentType: false,
+        processData: false,
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        beforeSend: function () {
+          fromObj.find(".error-message").remove();
+        },
+        success: function (res) {
+          $(".loading-icon").addClass("hide")
+          $("#submit_button").attr("disabled", false)
+          $(".btn-txt").text("Create Account")
+          fromObj
+          if (res.status) {
+            extenstion = res.data.email.split('@')[1]
+            $('#check_email').html("<a href='https://www." + extenstion + "/'>" + res.data.email + "</a>")
+            document.getElementById('contact').reset();
+            $('#welModal1').modal('show');
+          } else if (!$.isEmptyObject(res.errors)) {
+            $.each(res.errors, function (i, v) {
+              fromObj.find('input[name=' + i + ']').siblings("div").html(v.join(','));
+              fromObj
+                .find("input[name=" + i + "]")
+                .css({
+                  border: "1px solid red"
+                });
+              fromObj
+                .find("input[name=" + i + "]")
+                .siblings("div")
+                .css({
+                  'color': 'red',
+                  'font-size': '10px'
+                });
+            });
+          } else {
+            document.getElementById('contact').reset();
+          }
+        },
+        complete: function () {
+          // handle
+        },
+        error: function (xhr, err) {
+          var errMsg = formatErrorMessage(xhr, err);
+          // alert(errMsg);
+        },
+      });
+    }
+
+    var signupFrom = $("#contact");
+    signupFrom.submit(function (event) {
+      var valid = 1;
+      if (($('#terms_condition').prop('checked') == false)) {
+        $('#terms_condition').parent().css({
+          'border': 'solid 1px red',
+          'border-radius': '5px'
+        });
+        valid = 0;
+      }
+      if (($('#agreement_contract').prop('checked') == false)) {
+        $('#agreement_contract').parent().css({
+          'border': 'solid 1px red',
+          'border-radius': '5px'
+        });
+        valid = 0;
+      }
+
+      if (($('#terms_condition').prop('checked') == true) && (($('#agreement_contract').prop('checked') ==
+          true))) {
+        $('.custom-checkbox').css({
+          'border': 'solid 1px grey',
+          'border-radius': '5px'
+        });
+        // $('#agreement_contract').parent().css({'border': 'solid 1px red', 'border-radius':'5px'});
+        valid = 1;
+      }
+
+      if (valid == 1) {
+        // e.preventDefault();
+        var form = document.getElementById("contact");
+        var token = "{{csrf_token}}";
+
+        var formData = new FormData(form);
+        var fromObj = $("#contact");
+        var url = "{% url 'user_register' %}";
+        postAPI("user_register", url, formData, fromObj);
+        // }
+      }
+    });
+  });
+</script>
+
+<script>
+  $("#country").change(function () {
+    var thisObj = $(this).val();
+    var token = "{{csrf_token}}";
+    $.ajax({
+      url: "{% url 'state' %}",
+      data: {
+        country_id: thisObj
+      },
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function (res) {
+        $('#state').html(res.data);
+      }
+    });
+  });
+</script>
+
+<script>
+  $("#state").change(function () {
+    var thisObj = $(this).val();
+    var token = "{{csrf_token}}";
+    $.ajax({
+      url: "{% url 'city' %}",
+      data: {
+        state_id: thisObj
+      },
+      method: "POST",
+      headers: {
+        "X-CSRFToken": token
+      },
+      success: function (res) {
+        $('#city').html(res.data);
+      }
+    });
+  });
+
+  // Event to check Passwor and confirm Password Equal
+  $("#confirm_password").on("change", function () {
+    if ($("#password").val() == $("#confirm_password").val()) {
+      $("#confirm_password").css({
+        border: "1px solid green"
+      });
+      $("#password").css({
+        border: "1px solid green"
+      });
+      $("#message")
+        .html("Password matched")
+        .css({
+          color: "green",
+          "text-align": "left",
+          "font-size": "10px"
+        });
+        setTimeout(function(){ 
+            $("#message").html('')
+           }, 3000);
+    } else {
+      $("#confirm_password").css({
+        border: "1px solid red"
+      });
+      $("#password").css({
+        border: "1px solid red"
+      });
+      $("#message")
+        .html("Password does'nt matched")
+        .css({
+          color: "red",
+          "text-align": "left",
+          "font-size": "10px"
+        });
+        setTimeout(function(){ 
+            $("#message").html('')
+           }, 3000);
+    }
+  });
+
+  function CloseModalPopup() {
+    $("#welModal1").modal('hide');
+    window.location.href = "{% url 'user_sign_in' %}";
+  }
+</script>
+<!-- <script src="{% static '/js/user/form_validations.js' %}"></script> -->
+</script>
+
+<script>
+  const header = document.querySelector(".page-header");
+const toggleClass = "is-sticky";
+
+window.addEventListener("scroll", () => {
+  const currentScroll = window.pageYOffset;
+  if (currentScroll > 150) {
+    header.classList.add(toggleClass);
+  } else {
+    header.classList.remove(toggleClass);
+  }
+});
+
+</script>
+<style>
+  .hide {
+    display: none;
+  }
+  .modal-content{
+    background-color: black;
+    border: 4px solid white; 
+    border-radius: 35px;
+  }
+  .head{
+    color: white;
+  }
+  .content{
+    color: white;
+  }
+</style>
+{% endblock %}

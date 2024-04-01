@@ -1,0 +1,52 @@
+{% extends 'base_profile.html' %} 
+
+{% load static %} 
+
+{% block title %} Company-User Subscription {% endblock title %} 
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Company Subscription</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="login">
+  <div class="container forget-password">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+          <div class="panel-body">
+            <div class="text-center">
+              <div class="subBox">
+                <h2>Subscription Plan</h2>
+                {% if subscription.price.currency == 'USD' %}
+                  <h2>${{subscription.price.amount}}</h2>
+                {% else %}
+                <h2>₹{{subscription.price.amount}}</h2>
+                {% endif %}
+                <ul>
+                  <li>{{subscription.description}}</li>
+                  <li>Documentation</li>
+                  <li>Customers Support</li>
+                  <li>Free Updates</li>
+                  <li>Unlimited Domains</li>
+                </ul>
+                <div class="subFt"><a href="{% url 'payment_process' %}?subscription_id={{subscription.id}}">Purchase</a></div>
+              </div>
+            </div>
+        </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}

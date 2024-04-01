@@ -1,0 +1,235 @@
+{% extends 'base_profile.html' %} 
+{% load static %} 
+{% block title %} Hire Candidate {% endblock title %} 
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Replacement Requests</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}"> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+
+    <ul class="breadcrumb">
+      <li><a href="{% url 'monthly-subscription-view' %}">Hired candidate</a></li>
+      &nbsp; - &nbsp;
+      <li>Replacement Requests</li>
+    </ul>
+    <div class="ReplacementRequests">
+      <div class="d-flex justify-content-between align-items-center flex-wrap" style="padding: 0% 0% 1%;">
+        <form id="searchForm" action=".">
+          <input type="search" name="search" id='searchInput' placeholder="Search Candidate" value="{{search}}" />
+          <button id='searchSubmit' type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Message Modal -->
+      <div class="modal fade" id="MessageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" style="color: red;" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" >
+              <p id="message_modal">
+              </p>
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing candidate using table -->
+      <div class="table-responsive-md">
+        <table class="table table-bordered displayResume">
+          <thead class="thead-dark" align="center">
+            <tr>
+              <th width="15%" scope="col">Candidate Name</th>
+              <th width="15%" scope="col">Designation</th>
+              <th width="15%" scope="col">Contract Expiry</th>
+              <th width="55%" scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for  replacement_request in replacement_request %}
+              <tr>
+                <td>{{replacement_request.candidate.first_name}}</td>
+                <td>{{ replacement_request.candidate.current_designation }}</td>
+                <td>
+                  -
+                </td>
+                <td align="center">
+                  <a 
+                  href="#"
+                    data-toggle="tooltip" 
+                    title="hire"
+                    onclick="candidateHireRequest('{{candidate.id}}', call_by='single_hire')"
+                  >
+                  <u>candidate profile</u>
+                    
+                  </a>
+                  <a 
+                    href="#"
+                    data-toggle="tooltip" 
+                    title="view-resume"
+                    onclick="resumeViewed()"
+                    target="_blank"
+                  >
+                  <u>view-contract</u>
+                  </a>
+                  <a
+                    href="#"
+                    title="view-certificate" 
+                    data-toggle="modal" 
+                    onclick="certificateView('{{candidate.id}}')"
+                  >
+                  <u>Add-recommendation</u>
+                    
+                  </a>
+                  
+                </td>
+              </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        {% if replacement_request.has_other_pages %}
+          <ul class="pagination">
+            {% for i in replacement_request.paginator.page_range %}
+              {% if replacement_request.number == i %}
+                <li class="active">
+                  <a class="active">{{ i }}
+                  </a>
+                </li>
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+      <div class="newBtn">
+        {% if replacement_request.has_previous %}
+          <a href="?page={{ replacement_request.previous_page_number }}">
+            <img src="{% static 'img/pre-btn.png' %}" /> 
+            &nbsp; Older
+          </a>
+        {% else %}
+          <a>
+            <img src="{% static 'img/pre-btn.png' %}" /> 
+            &nbsp; Older
+          </a>
+        {% endif %}
+        {% if replacement_request.has_next %}
+          <a href="?page={{ replacement_request.next_page_number }}">
+            Newer &nbsp; 
+            <img src="{% static 'img/next-btn.png' %}" />
+          </a>
+        {% else %}
+          <a>
+            Newer &nbsp; 
+            <img src="{% static 'img/next-btn.png' %}" />
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %} 
+{% block footer_scripts %}
+
+<script>
+
+  $("#searchInput").keyup(function() {
+    if (!this.value) {
+        $('#searchForm').submit()
+    }
+  });
+  
+
+</script>
+
+<style>
+  .pagination a.active{
+    background-color: #3A81FF;
+    color: white;
+  }
+  .pagination a:hover:not(.active) {background-color: #ddd;}
+  
+  #searchInput {
+    width: 75%;
+    font-size: larger;
+    height: 40px;
+    padding: 10px;
+    border-radius: 6px;
+    border: solid #343a40 3px;
+  }
+</style>
+
+{%endblock footer_scripts %}

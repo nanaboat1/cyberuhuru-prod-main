@@ -1,0 +1,79 @@
+{%load static%}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="icon" href="static/img/favicon.ico">
+
+	<title>CERTIFICATE{{base_url}}</title>
+	<style>@page {background-image: url( {{base_url}});size: letter landscape;margin: 2cm; padding: 0cm;} * {margin: 0;padding: 0;} table, tr, td, th, tbody, thead, tfoot, p, img, figure, h3, h2 {page-break-inside: avoid !important;} img {width: 186px;max-width: 100%;height: auto;}.grand_parents {height: 100vh;width: 100vw;display: grid;justify-content: center;align-items: center;color: #000;font-family: 'Poppins', sans-serif;}.cer_parents {width: 792px;height: 612px;background: url("{% static 'img/cer-border2.png' %}") center center no-repeat;background-size: contain;-webkit-background-size: contain;-moz-background-size: contain;padding: 44px 44px;box-sizing: border-box;position: relative;}.cer-text-image {text-align: center;}.cer-text-image img {width: 280px;}.company_name {text-align: center}.company_name img {width: 120px;}.cer-content h3 {font-size: 20px;line-height: 1;font-weight: 500;padding-bottom: 10px;}.cer-content p {font-size: 14px;line-height: 1.4;font-weight: 400;}.cer-content {text-align: center;width: 530px;margin: 40px auto 0;}.equal {width: 39%;}.mid {width: 19%}.fcontainer{text-align: center;}.sm {display: inline-block;}.sm:first-child {clear: left;}.sm:last-child {clear: right;}.sm img {height: 2px;width: 160px;}input {width: 100%;height: 28px;line-height: 28px;}label {font-size: 14px;font-weight: 50;display: block;}</style>
+</head>
+
+<body>
+	{% load static %}
+	<div class="grand_parents">
+		<div class="cer_parents">
+			<table style="text-align: center; font-family:'Courier New', Courier, monospace; margin:0px; padding:0px; height: 110px;">
+				<tr style="page-break-inside: avoid;">
+					<td colspan="2">
+						<p style="margin:0px; padding:0px;">
+							<img src="static/img/line.png" />
+							<img src="static/img/modal-logo.png" />
+							<img src="static/img/line.png" />
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<figure style="margin: 15px;">
+							<img style="width: 250px;" src="static/img/cer-text.png" />
+						</figure>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<h3 style="color: rgb(24, 54, 134); 
+						font:italic bold 25px/22px  'Times New Roman', Times, serif;">
+						{{candidate_name}}
+						</h3>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<p style="font: small-caps bold 20px/30px Georgia, serif;">
+							For successfully completing the CyberSecurity online course and exampination on Topic
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<h3 style="color: rgb(134, 28, 24);
+							font: italic small-caps bold 27px/30px Georgia, serif;
+							margin: 5px;"	
+						>
+						{{course_name}}
+						</h3>
+					</td>
+				</tr>
+				<tr>
+					<td >
+						<h2>{{completion_date}}</h2>
+						<img src="static/img/line.png" />
+						<label>DATE</label>
+					</td>
+					<td>
+						<h2><img style="width: 148px;height: auto;" 
+							src="static/img/sign2.png" alt=""></h2>
+						<img src="static/img/line.png" />
+						<label>SIGNTURE<label>
+					</td>
+				</tr>
+			</table>
+			
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,116 @@
+{% load i18n static %}
+{% load trip_tags %}
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<!-- <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}><head> -->
+<title>CYBERUHURU ADMIN</title>
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/base.css" %}" />
+
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/bootstrap.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/font-awesome.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/ionicons.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/AdminLTE.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/_all-skins.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/morris.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/jquery-jvectormap.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/bootstrap-datepicker.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/daterangepicker.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/bootstrap3-wysihtml5.min.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/base.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/custom.css" %}" />
+
+<script src="{% static "admin/js/jquery.min.js" %}"></script>
+<script src="{% static "admin/js/jquery-ui.min.js" %}"></script>
+<script src="{% static "admin/js/bootstrap.min.js" %}"></script>
+<script src="{% static "admin/js/raphael.min.js" %}"></script>
+<script src="{% static "admin/js/morris.min.js" %}"></script>
+<script src="{% static "admin/js/jquery.sparkline.min.js" %}"></script>
+<script src="{% static "admin/js/jquery-jvectormap-1.2.2.min.js" %}"></script>
+<script src="{% static "admin/js/jquery-jvectormap-world-mill-en.js" %}"></script>
+<script src="{% static "admin/js/jquery.knob.min.js" %}"></script>
+<script src="{% static "admin/js/moment.min.js" %}"></script>
+<script src="{% static "admin/js/daterangepicker.js" %}"></script>
+<script src="{% static "admin/js/bootstrap-datepicker.min.js" %}"></script>
+<script src="{% static "admin/js/bootstrap3-wysihtml5.all.min.js" %}"></script>
+<script src="{% static "admin/js/jquery.slimscroll.min.js" %}"></script>
+<script src="{% static "admin/js/fastclick.js" %}"></script>
+<script src="{% static "admin/js/adminlte.min.js" %}"></script>
+<script src="{% static "admin/js/dashboard.js" %}"></script>
+<script src="{% static "admin/js/demo.js" %}"></script>
+<script src="{% static "admin/js/custom.js" %}"></script>
+<!-- End -->
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}
+	<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">
+{% endif %}
+{% block extrahead %}{% endblock %}
+{% block responsive %}
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive.css" %}">
+	{% if LANGUAGE_BIDI %}
+		<link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive_rtl.css" %}">
+	{% endif %}
+{% endblock %}
+{% block blockbots %}
+<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
+
+</head>
+{% load i18n %}
+
+<body
+	class="{% if is_popup %} 
+						popup 
+					{% endif %}
+					{% block bodyclass %}{% endblock %} hold-transition skin-blue sidebar-mini"
+	data-admin-utc-offset="{% now "Z" %}">
+
+	<!-- Container -->
+	<div id="wrapper">
+
+		{% if not is_popup %}
+
+		{% if has_permission %}
+			{% include "admin/top_header.html" %}
+			{% include "admin/left_sidebar.html" %}
+		{% endif %}
+		<!-- END Header -->
+		{% endif %}
+
+		<!-- Content Wrapper. Contains page content -->
+		<div {% if has_permission %}class="content-wrapper" {% else %} id="container" class="logincontainer" {% endif%}>
+			{% block breadcrumbs %}
+			<div class="breadcrumbs">
+				<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+				{% if title %} &rsaquo; {{ title }}{% endif %}
+			</div>
+			{% endblock %}
+			{% block messages %}
+			{% if messages %}
+			<ul class="messagelist">
+				{% for message in messages %}
+				<li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message|capfirst }}</li>
+					{% endfor %}
+			</ul>
+			{% endif %}
+			{% endblock messages %}
+			<div id="content" class="siteTitle">
+				{% block pretitle %}{% endblock %}
+				{{content_title}}
+				{% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+				{% block content %}
+				{% block object-tools %}{% endblock %}
+				{{ content }}
+				{% endblock %}
+				{% block sidebar %}{% endblock %}
+				<br class="clear">
+			</div>
+			<!-- END Content -->
+		</div>
+		<!-- Content Wrapper -->
+		{% block footer %}<div id="footer"></div>{% endblock %}
+	</div>
+	<!-- END Container -->
+
+</body>
+
+</html>

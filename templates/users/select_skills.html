@@ -1,0 +1,226 @@
+{% extends 'base_profile.html' %}
+
+{% load static %}
+
+{% block title %} Candidate Select | Skills {% endblock title %}
+
+{% block content %}
+{% include 'partials/_messages.html' %}
+
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Profile</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Skills</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="mainProfile">
+  <style>
+    .skilBtn{ text-align: right;}
+    .skilBtn li{ display: inline-block;}
+    .skilBtn li + li{padding-left: 20px;}
+    .skilBtn li a{background:#333;border-radius:25px; padding:10px 25px; color:#fff; font-size: 14px;font-weight:500;display:block; }
+    .skilBtn li a:hover{ color: #fff; background:#5e72e4;}
+    
+    </style>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-arrow-right"></i> Edit Profile</a></li>
+            <li><a href="{% url 'candidate_certificate' %}"><i class="fas fa-arrow-right"></i> Certification</a></li>
+            <li><a href="{% url 'user_change_password' %}"><i class="fas fa-arrow-right"></i> Change Password</a></li>
+            <li><a href="{% url 'candidate_training' %}"><i class="fas fa-arrow-right"></i> Training</a></li>
+            <li><a href="{% url 'candidate_agreement' %}"><i class="fas fa-arrow-right"></i> Agreement</a></li>
+            <li><a href="{% url 'candidate_advertisement' %}"><i class="fas fa-arrow-right"></i> Advetisments</a></li>
+            
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="skilBtn">
+          <li><a href="{% url 'select_skills'%}">Select Skills</a></li>
+          <li><a href="{% url 'recommendation_courses'%}">Recommendation Courses</a></li>
+        </ul>
+        <div class="trainingBox">
+          <h1>Pick the skills you are interested in</h1>
+          <div class="skiilBox">
+            <div class="addSkill">
+              <button><i class="fas fa-plus"></i></button>
+              <input type="text" id="searched_skill" placeholder="select skills or add first below list"
+                onkeypress="getdb_skills(event)">
+            </div>
+            <div id="SkillsearchedList" class="sklist">
+              <ul class="skList" id="searchedList">
+              </ul>
+            </div>
+            <div id="skillDefaultList" class="skillDivClass">
+              <ul class="skList" id="skList">
+                {%for skill in db_skills%}
+                {%if skill.id in candidate_skills_list%}
+                <li>
+                  <button id={{skill.id}} onClick="reply_click(this.id)" style="background: #00b7ff; color:white;">
+                  <a id={{skill.id}}  > <i class="fas fa-plus"></i> {{skill.name}} </a>
+                  </button>
+                </li>
+                {%else%}
+                <li>
+                  <button id={{skill.id}} onClick="reply_click(this.id)"><i class="fas fa-plus"></i> {{skill.name}} </button>
+                </li>
+                {%endif%}
+                {%endfor%}
+              </ul>
+            </div>
+			<div class="seeMore">
+            <button class="" class="show_more" id="show_more" onclick="load_data()">
+            Show more <i class="fas fa-angle-down"></i>
+            </button>
+          </div>
+		<div class="skipBtn"> <a href="{% url 'recommendation_courses' %}">Proceed</a>
+            <p>Skills you are interested in are used to show the recommended courses to you.</p>
+          </div>	  
+          </div>
+          
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% block footer_scripts %} 
+<script>
+  function reply_click(clicked_id) {
+    var button_id = clicked_id
+    
+    function postAPI(type, url, button_id) {
+      $.ajax({
+        url: url + "?button_id=" + button_id,
+        method: "POST",
+        processData: false,
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+
+        success: function (db_flags) {
+          if (db_flags.create_flag == true) {
+            document.getElementById(button_id).style.background = "#00b7ff";
+            document.getElementById(button_id).style.color = "white";
+          } else {
+            document.getElementById(button_id).style.background = "none";
+            document.getElementById(button_id).style.color = "black";
+          }
+        }
+      });
+    }
+    var url = "{% url 'select_skills' %}";
+    postAPI("select_skills", url, button_id);
+
+  }
+
+  function load_data() {
+    document.getElementById("show_more").disabled = false;
+  };
+
+  $("#show_more").click(function () {
+    var token = "{{csrf_token}}";
+    var url = "{% url 'select_skills' %}"
+    $.ajax({
+      url: url + "?click_flag=True",
+      method: "GET",
+      headers: {
+        "X-CSRFToken": token
+      },
+
+      success: function (res) {
+        parsedata = res.data
+        var doc_obj = document.getElementById("skList")
+        for (var i = 0; i < parsedata.length; i++) {
+          doc_obj.innerHTML +=
+            `<li>
+            <button  
+            id=${parsedata[i].id} 
+            onClick="reply_click(${parsedata[i].id})"
+            >
+              <i class="fas fa-plus"></i> 
+              ${parsedata[i].name}
+            </button>
+          </li>`
+
+        }
+        document.querySelector(".skillsDiv").style.display = 'none';
+      }
+    })
+  });
+
+
+  const getdb_skills = function (event) {
+
+    function postfuncAPI(type, url, searched_skill) {
+      $.ajax({
+        url: url + "?searched_skill=" + searched_skill,
+        method: "GET",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        success: function (res) {
+          document.querySelector("#skillDefaultList").style.display = "none"
+          data = res.skills
+          var doc_obj = document.getElementById("searchedList")
+          for (var i = 0; i < data.length; i++) {
+            doc_obj.innerHTML +=
+              `<li>
+              <button  
+                id=${data[i].id} 
+                onClick="reply_click(${data[i].id})"
+              >
+                <i class="fas fa-plus"></i> 
+                ${data[i].name}
+              </button>
+            </li>`
+            if (res.selected_skill_list.includes(data[i].id)){
+              $("#searchedList").find("button[id="+data[i].id+ "]").css({"background-color": "#00b7ff", "color": "white"})
+              
+            }
+          }
+        }
+      })
+    }
+    var keyPressed = event.keyCode || event.which;
+    if (keyPressed === 13) {
+      var url = "{% url 'select_skills' %}";
+      var searched_skill = document.getElementById("searched_skill").value;
+      postfuncAPI("select_skills", url, searched_skill);
+    }
+  };
+  $("#searched_skill").keyup(function() {
+
+    if (!this.value) {
+      $('#skillDefaultList').show();
+      document.querySelector("#SkillsearchedList").style.display = "none"
+      $('#searchedList').empty()
+    }
+    else{
+      $('#SkillsearchedList').show();
+    }
+    
+
+});
+</script> 
+{%endblock footer_scripts%}

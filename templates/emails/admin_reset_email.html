@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %} 
+{% load i18n static %} 
+{% block extrastyle %}
+  {{ block.super }}
+    <link 
+      rel="stylesheet" 
+      type="text/css" 
+      href="{% static 'admin/css/login.css' %}"
+    > 
+      {{ form.media }} 
+{% endblock %}
+{% block bodyclass %}
+    {{ block.super }} login{% endblock %} 
+    {% block usertools %} {% endblock %} 
+    {% block nav-global %}{% endblock %} 
+    {% block content_title %}{% endblock %} 
+    {% block breadcrumbs %}{% endblock %} 
+    {% block content %} 
+        
+    <div style="width:100%">
+        <table width="100%" border="0" cellpadding="8" cellspacing="0" align="center" style="font-size:15px; font-family:arial; background-color:#fff; border:2px solid #ff6d57;">
+            <tr style="background-color:#ccc">
+                <td colspan="5"><img src="{% static 'users/img/logo.png' %}" alt="" /></td>
+            </tr>
+            <tr>
+                <td style="background:#fff; font-size:16px; border-right:1px dashed; border-color:#ccc;" colspan="3">
+                    <h3 style="text-transform:uppercase;">
+                        <p>Hello {{user.first_name}} {{user.last_name}},</p>
+                    </h3>
+                    Please click on below link for reset the password with CyberUhuru.</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <p><a href="{{reset_url}}" style="background:#342f80;color:#fff;font-weight:500;font-size:17px;padding:5px 30px 5px 30px;">Click here</a></p>
+                    <p>If clicking the link above doesn't work, please copy and paste the URL given below in a new browser window instead.</p>
+                    <p>Reset password Link: {{reset_url}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h4>Best Regards,<br/>CyberUhuru.</h4>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

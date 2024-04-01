@@ -1,0 +1,141 @@
+{% extends 'base_profile.html' %}
+
+{% load static %} 
+
+{% block title %} Recommendation Candidates {% endblock title %} 
+
+{% block content %}
+<section class="inHeader">
+  <style>
+  .skilBtn{ text-align: right;}
+  .skilBtn li{ display: inline-block;}
+  .skilBtn li + li{padding-left: 20px;}
+  .skilBtn li a{background:#333;border-radius:25px; padding:10px 25px; color:#fff; font-size: 14px;font-weight:500;display:block; }
+  .skilBtn li a:hover{ color: #fff; background:#5e72e4;}
+  
+  </style>
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Profile</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Advertisement</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-arrow-right"></i> Edit Profile</a></li>
+            <li><a href="{% url 'candidate_certificate' %}"><i class="fas fa-arrow-right"></i> Certification</a></li>
+            <li><a href="{% url 'user_change_password' %}"><i class="fas fa-arrow-right"></i> Change Password</a></li>
+            <li><a href="{% url 'candidate_training' %}"><i class="fas fa-arrow-right"></i> Training</a></li>
+            <li><a href="{% url 'candidate_agreement' %}"><i class="fas fa-arrow-right"></i> Agreement</a></li>
+            <li><a href="{% url 'candidate_advertisement' %}"><i class="fas fa-arrow-right"></i> Advetisments</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="profileForm">
+          <ul class="skilBtn">
+            <li><a href="{% url 'select_skills'%}">Select Skills</a></li>
+            <li><a href="{% url 'recommendation_courses'%}">Recommendation Candidate</a></li>
+            <li><a href="{% url 'candidate_training' %}">Training</a></li>
+          </ul>
+          <div class="trainingBox">
+            <h1> Recommended Advestisements</h1>
+            <div class="skiilBox reco_training">
+              <div class="demo6" data-simplebar>
+              {% for course in recommendation_courses %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div>
+                      <video
+                        controls
+                        poster="{{course.thumbnail.url}}"
+                        style="width: 100%; height: auto; vertical-align: middle;"
+                      >
+                        <source src="{{course.video_url}}" type="video/mp4"/>
+                      </video>
+                    </div>
+                    <div class="videoDt">
+                      <p>
+                        <i class="far fa-calendar-alt"></i> {{course.updated_at}}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-md-8 sort-dis" style="text-align:justify;">
+                    <strong><h3>{{course.course_title}}</h3></strong>
+                    <p>{{course.course_content|safe}}</p>
+                    <div class="check">
+                      {% if course.id not in train %}
+                        <input 
+                          id="{{course.id}}" 
+                          onClick="add_course(this.id)" 
+                          class="btn btn-outline-primary" 
+                          style="border-radius: 20px; cursor: pointer;"
+                          value="Add Course"
+                        />
+                      {% else %}
+                        <input disabled class="btn btn-success" style="border-radius: 20px" value="Added"/>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <hr />
+              {% endfor %} 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% endblock content %}
+
+{% block footer_scripts %}
+
+<script>
+  function add_course(clicked_id){
+    var button_id = clicked_id
+
+    function postAPI(type, url, button_id){
+      $.ajax({
+        url: url + "?button_id=" + button_id,
+        method: "POST",
+        processData: false,
+        headers:{
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        success: function (res) {
+          if (res == true) {
+            document.getElementById(button_id).style.background = "#00b7ff";   
+          } else {
+            document.getElementById(button_id).style.background = "green";
+            document.getElementById(button_id).style.color = "white";
+            document.getElementById(button_id).disabled = true;
+            x = document.getElementById(button_id).value ="Added"
+            //console.log(x) 
+          }
+        }
+          
+      });
+    }
+    var url = "{% url 'candidate_training' %}";
+    postAPI("candidate_training", url, button_id);
+    console.log("Button_id:", button_id)
+  }
+</script>
+
+
+{% endblock footer_scripts%}

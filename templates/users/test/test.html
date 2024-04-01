@@ -1,0 +1,389 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" type="image/x-icon" />
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'css/fonts.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel='stylesheet' href="{% static 'css/owl.carousel.min.css' %}">
+  <link rel='stylesheet' href="{% static 'css/owl.theme.default.min.css' %}">
+  <link rel="stylesheet" type="text/css" media="all" href="{% static 'css/stellarnav.css' %}">
+  <!-- Scrollbar -->
+  <link href="{% static 'css/simplebar.css' %}" rel="stylesheet" type="text/css">
+  <title>CyberUhuru | Test</title>
+  <style>
+    body {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="testPageHeder">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-6 col-sm-4 "> <a href="index.html" class="logo"><img src="{% static 'img/logo.png' %}"
+              class="img-fluid"></a> </div>
+        <div class="col-6 col-sm-8 text-right">
+          <div class="remaingTime">Time : <span id="timer_div"></span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <section class="quesSection">
+    {% for i in page_obj %}
+    <div class="container-fluid">
+
+      <h3 id="question">Question No. {{page_obj.number}}</h3>
+      <span id="question_no" hidden>{{i.id}}</span
+    </div>
+    <div class="container-fluid">
+      <h4>{{i.question}}</h4>
+      <ul class="queList">
+        {% for j in i.question_choices.all %}
+        <li>
+          <label>
+            <input type="radio" id="{{j.id}}" name="user_answer" value='{{j.content}}'>
+            {{j.content}}
+          </label>
+        </li>
+        {%endfor%}
+      </ul>
+    </div>
+    <hr>
+    {% endfor %}
+  </section>
+  <section class="nextBtnFooter">
+    <div class="container-fluid">
+
+      <ul class="pagination align-right float-right mr-auto">
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}&course_id={{course_id}}" onClick="save_func();">Next</a>
+        </li>
+        {% endif %}
+      </ul>
+      <a href="#" data-toggle="modal" data-target="#exampleModal" onclick="stop_timer(); save_func()">Submit Test</a>
+    </div>
+  </section>
+  <!--On Load Modal-->
+  <!-- Modal -->
+
+  <!--On Load Modal end-->
+
+  <!-- Modal -->
+  <div class="modal fade showResult" id="exampleModal"  role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <button type="button" onclick="closeTab()" class="close" data-dismiss="modal" aria-label="Close"><img
+            src="{% static 'img/close2.png' %}"></button>
+        <div class="modal-body">
+          <h2 class="text-center">Test Result</h2>
+          <h3 id="test_name"></h3>
+          <div class="score clearfix">
+            <div class="attamp">
+              <figure><img src="{% static 'img/att-icon.png' %}"></figure>
+              <h4>Correct</h4>
+              <p id="Correct"></p>
+            </div>
+            <div class="attamp">
+              <figure class="clr2"><img src="{% static 'img/time-icon.png' %}"></figure>
+              <h4>Time</h4>
+              <p id="Time"><span>/90 min</span> </p>
+            </div>
+            <div class="attamp">
+              <figure class="clr3"><img src="{% static 'img/score-icon.png' %}"></figure>
+              <h4>Score</h4>
+              <p id="Score"></p>
+            </div>
+          </div>
+          <div class="passed">
+            <figure><img src="{% static 'img/pass-icon.png' %}"></figure>
+            <h4 id='result'></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <!-- ScrollBar -->
+  <script src="{% static 'js/simplebar.js' %}"></script>
+
+  <!-- <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script> -->
+  <script type="text/javascript" src="{% static 'js/stellarnav.min.js' %}"></script>
+  <script type="text/javascript">
+    jQuery(document).ready(function ($) {
+      jQuery('.stellarnav').stellarNav({
+        //theme: 'dark',
+        breakpoint: 991,
+        position: 'right',
+        //phoneBtn: '18009997788',
+      });
+    });
+  </script>
+  <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+  <script>
+    $(document).ready(function () {
+      $("#bannerSlider").owlCarousel({
+        //animateOut: 'fadeOut',
+        items: 1,
+        nav: false,
+        dots: true,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 5000,
+        autoplayHoverPause: true
+      });
+    });
+  </script>
+  <script>
+    $('#calender').owlCarousel({
+      loop: true,
+      margin: 30,
+      dots: false,
+      nav: true,
+      autoplay: true,
+      singleItem: true,
+      navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+      responsiveClass: true,
+      responsive: {
+        0: {
+          items: 1
+        },
+        400: {
+          items: 1
+        },
+        768: {
+          items: 2
+        },
+        1000: {
+          items: 3
+        },
+        1400: {
+          items: 3
+        }
+      }
+    });
+  </script>
+  
+  <script>
+    $('#toggle-search').on('click', function () {
+      $('#searchBar').toggle('display: inline-block');
+    });
+  </script>
+  <!-- custom check box -->
+  <script type="text/javascript">
+    function customCheckbox(checkboxName) {
+      var checkBox = $('input[name="' + checkboxName + '"]');
+      $(checkBox).each(function () {
+        $(this).wrap("<span class='custom-checkbox'></span>");
+        if ($(this).is(':checked')) {
+          $(this).parent().addClass("selected");
+        }
+      });
+      $(checkBox).click(function () {
+        $(this).parent().toggleClass("selected");
+      });
+    }
+    $(document).ready(function () {
+      customCheckbox("option[]");
+    })
+  </script>
+  <script>
+    function customRadio(radioName) {
+      var radioButton = $('input[name="' + radioName + '"]');
+      $(radioButton).each(function () {
+        $(this).wrap("<span class='custom-radio'></span>");
+        if ($(this).is(':checked')) {
+          $(this).parent().addClass("selected");
+        }
+      });
+      $(radioButton).click(function () {
+        if ($(this).is(':checked')) {
+          $(this).parent().addClass("selected");
+        }
+        $(radioButton).not(this).each(function () {
+          $(this).parent().removeClass("selected");
+        });
+      });
+    }
+    $(document).ready(function () {
+      customRadio("gender");
+      customRadio("2");
+      customRadio("1");
+      customRadio("3");
+    })
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $('.button-left').click(function () {
+        $('.leftSidebar').toggleClass('fliph');
+      });
+
+    });
+  </script>
+
+  <script>
+    function save_func() {
+      function postAPI(type, url, selected_value, question_id) {
+        var user_test_id = "{{user_test_id}}"
+        if (user_test_id){
+          url = url + "?selected_value=" + selected_value + "&question_id=" + question_id + "&user_test_id=" + user_test_id
+        }
+        else{
+          url = url + "?selected_value=" + selected_value + "&question_id=" + question_id
+        }
+        $.ajax({
+          url: url,
+          method: "POST",
+          processData: false,
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+        });
+      }
+      var url = "{% url 'candidate_test_save' %}";
+      var selected_value = $('input[name="user_answer"]:checked').val();
+      var question = document.getElementById('question_no').textContent;
+      question_id = question//question.slice(13, )
+      postAPI('candidate_test_save', url, selected_value, question_id)
+    }
+  </script>
+
+  <script>
+    var my_timer;
+    $("#timer_div").ready(function timer() {
+      sessionStorage.setItem("duration", '{{duration}}');
+      if (sessionStorage['time']) {
+        var timer_stored = sessionStorage.getItem('time');
+        var time = timer_stored;
+      } else {
+        var time = '{{duration}}';
+      }
+      timer_div = document.getElementById("timer_div");
+      applyCSS(timer_div);
+      timer_div.innerHTML = time;
+      my_timer = setInterval(function () {
+        var hr = 0;
+        var min = 0;
+        var sec = 0;
+        var time_up = false;
+        t = time.split(":")
+        hr = parseInt(t[0]);
+        min = parseInt(t[1]);
+        sec = parseInt(t[2]);
+        if (sec == 0) {
+          if (min > 0) {
+            sec = 59;
+            min--;
+          } else if (hr > 0) {
+            min = 59;
+            sec = 50;
+            hr--;
+          } else {
+            time_up = true;
+            
+          }
+        } else {
+          sec--;
+        }
+
+        if (hr < 10)
+          hr = "0" + hr;
+        if (min < 10)
+          min = "0" + min;
+        if (sec < 10)
+          sec = "0" + sec;
+        time = hr + ":" + min + ":" + sec;
+        sessionStorage.setItem("time", time);
+        sessionStorage.setItem("my_timer", my_timer);
+
+        if (time_up) {
+          time = "TIME UP"
+        }
+        //stop_timer()
+        //$('#exampleModal').modal('show');
+
+        timer_div = document.getElementById("timer_div");
+        timer_div.innerHTML = time;
+        if (time_up) {
+
+          clearInterval(my_timer);
+          save_func()
+          stop_timer()
+        }
+      }, 1000);
+
+      function applyCSS(timer_div) {
+        timer_div.style.fontSize = "22px";
+        timer_div.style.color = "teal";
+        timer_div.style.fontWeight = "bold";
+        timer_div.style.width = "150px";
+        timer_div.style.padding = "10px";
+        timer_div.style.textAlign = "center";
+        timer_div.style.border = "2px solid blue";
+        timer_div.style.borderRadius = "8px"
+      }
+    })
+
+    function stop_timer() {
+      if (sessionStorage['my_timer']) {
+        var timer = sessionStorage.getItem('my_timer');
+        var time = sessionStorage.getItem('time');
+        clearInterval(timer);
+
+        function postfunc(type, url, time) {
+          $.ajax({
+            url: url + "?time=" + time + '&duration=' + duration + "&test_id=" + test_id,
+            method: "POST",
+            processData: false,
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+            },
+            success: function (modal_dict) {
+              var data = modal_dict.data
+              $('#Correct').html(data.test_answer_count + " / " + data.no_of_questions);
+              $('#Score').html(data.candidate_percentage + "%");
+              $('#Time').html(data.time_taken);
+              $('#test_name').html(data.test_name);
+              $('#result').html(data.is_passed);
+              $('#exampleModal').modal('show');
+            }
+
+          });
+        }
+        var test_id = '{{test_id}}'
+        var url = "{% url 'candidate_result' %}";
+        var duration = sessionStorage.getItem('duration')
+        postfunc('candidate_result', url, time, duration, test_id)
+      }
+    }
+    function closeTab(){
+      sessionStorage.clear();
+      $("#exampleModal").modal('hide');
+      window.location.href = "{% url 'candidate_training' %}";
+    }
+  </script>
+</body>
+</html>

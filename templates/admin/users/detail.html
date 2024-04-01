@@ -1,0 +1,49 @@
+{% extends "admin/base_site.html" %} 
+{% load i18n static %} 
+{% block title %} Detail | {{ site_title|default:_('CYBERUHURU ADMIN') }}{% endblock %} 
+{% block content %}
+
+<div class="results">
+  <table id="result_list" class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col" class="column-candidate_user">
+          <div class="text"><span>S.NO.</span></div>
+          <div class="clear"></div>
+        </th>
+        <th scope="col" class="column-candidate_user">
+        
+          <div class="text"><span>User Details</span></div>
+          <div class="clear"></div>
+        </th>
+        <th scope="col" class="column-candidate_user">
+        
+          <div class="text"><span>Count</span></div>
+          <div class="clear"></div>
+        </th>
+        <th scope="col" class="column-account_actions">
+          <div class="text"><span>Actions</span></div>
+          <div class="clear"></div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for property in data %}
+        <tr class="row1">
+          <td class="field-counter">counter</td>
+          <td class="field-{{property.name}}">{{property.name}}</td>
+          <td class="field-{{property.name}}">{{property.count}}</td>
+          <td class="field-link">
+            {% if property.link %}
+              {{ property.link }}
+            {% else %}
+              --
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

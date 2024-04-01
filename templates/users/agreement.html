@@ -1,0 +1,126 @@
+{% extends 'base_profile.html' %}
+
+{% load static %} 
+
+{% block title %} Candidate Agreement {% endblock title %}
+
+{% block content %}
+{% include 'partials/_messages.html' %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Profile</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Agreement</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-arrow-right"></i> Edit Profile</a></li>
+            <li><a href="{% url 'candidate_certificate' %}"><i class="fas fa-arrow-right"></i> Certification</a></li>
+            <li><a href="{% url 'user_change_password' %}"><i class="fas fa-arrow-right"></i> Change Password</a></li>
+            <li><a href="{% url 'candidate_training' %}"><i class="fas fa-arrow-right"></i> Training</a></li>
+            <li><a href="{% url 'candidate_agreement' %}"><i class="fas fa-arrow-right"></i> Agreement</a></li>
+            <li><a href="{% url 'candidate_advertisement' %}"><i class="fas fa-arrow-right"></i> Advetisments</a></li>
+            
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+
+  <div class="profileForm">
+    <ul class="skilBtn">
+      {% comment %} <li><a href="#">Select Skills</a></li>
+      <li><a href="#">Recommendation Courses </a></li> {% endcomment %}
+    </ul>
+
+    <div class="trainingBox">
+      <h1>Agreement Document </h1>
+      <ul class="aggList">
+
+        <li class="d-md-flex d-sm-block flex-nowrap justify-content-between align-items-center">
+          <label>
+              <input type="radio" name="2" id="agree_dl" value="yes">Contractual agreement for 5 years 
+          </label> 
+          <div id="icon1" class="icon" style="display:none;">
+            {% if agreement.document %}
+              <a href="{{agreement.document.url}}" >
+                <img src="{% static 'img/doc.png' %}">
+              </a>
+            {% else %}
+              <a href="" >
+                <img src="{% static 'img/doc.png' %}">
+              </a>
+              {% endif %}
+          </div>
+        </li>
+
+        <li class="d-md-flex d-sm-block flex-nowrap justify-content-between align-items-center">
+          <label>
+              <input type="radio" name="2" id="agree_ul" value="yes" >Upload signed Contractual agreement for 5 years 
+          </label>     
+          <div id="icon2" class="icon" style="display:none;">
+              <form action="/candidate/agreement/" method="POST" enctype="multipart/form-data"  >
+                <label for="upload_file" ><img src="{% static 'img/attach.png'%}"/> </label>
+                {% csrf_token %}
+                <input type="file" name="upload_file"  id="upload_file" 
+                  style="display:none;"
+                  accept=".pdf, .docx, .doc"
+                />
+                <input id="view_upload_file" value ="Select the PDF" disabled/>
+                <button id="save_upload_file" class="btn btn-success" type="submit" disabled> Upload </button>
+                
+              </form>
+              <a href="{{agreement.signed_document.url}}">{{agreement.signed_doc_filename}}</a>
+              <p>{{form.upload_file.errors}}</p>
+              {% if form.upload_file.errors%}
+                        <div style="color: red; text-align: left; font-size: 12px">
+                            {{form.upload_file.errors}}
+                        </div>
+              {%endif%}
+          </div>
+        </li>	
+
+	    </ul>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
+
+{% block footer_scripts %}
+<script>
+  //  PDF name View
+$("#upload_file").change(function(){
+    var value=$("#upload_file").val()
+    var splits=value.split("fakepath\\")
+    console.log("VSSV", value,splits[1])
+    $("#view_upload_file").val(splits[1])
+    $("#save_upload_file").prop("disabled", false)
+})
+</script>
+
+<script>
+    $("#agree_ul").on("click",function(){
+      $("#icon1").css("display", "none")
+      $("#icon2").css("display", "block")
+    })
+    $("#agree_dl").on("click",function(){
+      $("#icon2").css("display", "none")
+      $("#icon1").css("display", "block")
+    })
+
+</script>
+
+{%endblock footer_scripts%}

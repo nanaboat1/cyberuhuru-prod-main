@@ -1,0 +1,73 @@
+{% load static %}
+
+
+<footer>
+  <div class="container">
+    <div class="mainFoot">
+    <div class="ftAbout">
+      <img src={% static "latest_ui/images/logo.png" %} alt="">
+      <p>Smart and fast product to help you meet your clients' needs.</p>
+      <ul class="socialMedia">
+        <li><a href=""><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href=""><i class="fab fa-instagram"></i></a></li>
+        <li><a href=""><i class="fab fa-youtube"></i></a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="">Solutions</a></li>
+        <li><a href="">Features</a></li>
+        <li><a href="">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Support</h5>
+      <ul>
+        <li><a href="">Help Center</a></li>
+        <li><a href="">Developers</a></li>
+      </ul>
+    </div>
+    <div class="ftMenu">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="">Terms & Conditions</a></li>
+        <li><a href="">Privacy policy</a></li> 
+      </ul>
+    </div>
+  </div>
+  </div>
+</footer>
+
+
+<script>
+  $("#footer").ready(function () {
+
+  var token = "{{csrf_token}}";
+  $.ajax({
+    url: "{% url 'company-address' %}",
+    method: "GET",
+    headers: {
+      "X-CSRFToken": token
+    },
+    success: function (res) {
+      if (res.errors) {
+        $('#footer-address-ul').html('No Address Found');
+      }
+      if (res) {
+        $('#footer-address-ul').html("<li><i class='fas fa-map-marker-alt'></i>" + res.company_address + "</li>" +
+        "<li><i class='fas fa-phone'></i>" + res.contact_number +  "</li>" + 
+        "<li><a href='{% static 'mailto:info@cyberuhuru.com'%}'>" +
+          "<i class='far fa-envelope'></i>" +  res.email_address + "</a></li>");
+      }
+    }
+  });
+});
+</script>

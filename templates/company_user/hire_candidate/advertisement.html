@@ -1,0 +1,128 @@
+{% extends 'base_profile.html' %}
+
+{% load static %} 
+
+{% block title %} Company Advertisement {% endblock title %}
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Previous Requests</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}"> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+
+        {% comment %} ------------------------------------------- {% endcomment %}
+        <form method="post" action="">
+          
+          
+     
+          <div class="profileForm">
+            {% csrf_token %}
+            <table class="table table-bordered">
+                <tr>
+                    <th>Job Title</th>
+                    <td><input class="form-control" type="text" name="job_title" required /></td>
+                </tr>
+                <tr>
+                    <th>Workplace Title</th>
+                    <td><input class="form-control" type="text" name="workplace_title" required/></td>
+                </tr>
+                <tr>
+                    <th>Job Location</th>
+                    <td>
+                        <input class="form-control" type="text" name="job_location" required ></textarea>
+                    </td>
+                </tr>
+                <tr>
+                  <th>Company Name</th>
+                  <td><input class="form-control" type="text" name="company_name" required/></td>
+              </tr>
+              <tr>
+                  <th>Description of Job</th>
+                  <td><input class="form-control" type="text" name="description_of_job" required /></td>
+              </tr>
+              <tr>
+                <th>Filter</th>
+                  <td>
+                    <select name="Filter" class="form-control">
+                      <option value="Part Time">Part Time</option>
+                      <option value="Full Time">Full Time</option>
+                      <option value="Experienced">Experienced</option>
+                      <option value="Fresher">Fresher</option>
+                      <option value="Intern">Intern</option>
+                      <option value="Contractual">Contractual</option>
+                    </select> 
+                  </td>
+              </tr>
+            </table>
+            
+  
+                <br>
+                  {% csrf_token %}
+                  {{form.as_p}} 
+                  <button type="submit" style="cursor: pointer;" class="save btn btn-primary">PUBLISH</button>                  
+              
+            </form>
+          </div>
+        </section>
+        {% comment %} ------------------------------------------------- {% endcomment %}
+  
+{% endblock content %}

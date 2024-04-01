@@ -1,0 +1,107 @@
+{% extends 'base_profile.html' %} 
+{% load static %} 
+{% block title %} Hire Candidate {% endblock title %} 
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Previous Requests</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}"> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="profileForm">	
+       
+<div class="pendingRequest">	
+	<h2 class="mt-0">Pending </h2>
+	<table class="table table-bordered">
+  <thead class="thead-dark">
+    <hr>
+    <tr>
+      <th width="26%" scope="col">Candidate Name</th>
+      <th width="26%" scope="col">Designation</th>
+      <th width="40%" scope="col">Contract Expiry</th>
+      <th width="8%" scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for request in hiring_requests %}
+      <tr>
+        <td>{{request.candidate.first_name}} {{request.candidate.last_name}}</td>
+        <td>{{request.candidate.current_designation}}</td>
+        <td>--</td>
+        <td class="penBtn green"><a href="#">{{request.status.name}}</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+	</div> 
+    
+    
+  </div>
+</section>
+
+{% endblock content %} 
+
+{% block footer_scripts %}
+
+<script>
+
+</script>
+
+{%endblock footer_scripts %}

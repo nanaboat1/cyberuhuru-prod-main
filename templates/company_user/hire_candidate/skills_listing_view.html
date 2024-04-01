@@ -1,0 +1,154 @@
+{% extends 'base_profile.html' %} 
+{% load static %} 
+{% block title %} Hire Candidate {% endblock title %} 
+{% block content %}
+
+<section class="profile">
+  <div class="leftSidebar left">
+    <div class="menu-btn">
+      <a href="#" class="button-left"><i class="fas fa-bars"></i></a>
+    </div>
+    <ul class="lftMenu">
+      <li>
+        <a href="{% url 'company_dashboard' %}"
+          ><img src="{% static 'img/das-icon.png' %}" /> Dashboard</a
+        >
+      </li>
+      <li>
+        <a href="{% url 'company_profile' %}"
+          ><img src="{% static 'img/edit.png' %}" /> Company Profile</a
+        >
+      </li>
+      <li>
+        <a href="{% url 'monthly-subscription-view' %}" class="active"
+          ><img src="{% static 'img/certi.png' %}" />Hire Candidates</a
+        >
+      </li>
+      <li>
+        <a href="{% url 'previous-request' %}"
+          ><img src="{% static 'img/certi.png' %}" /> Previous Requests</a
+        >
+      </li>
+      <li>
+        <a href="{% url 'hired-candidate-list' %}"
+          ><img src="{% static 'img/Agreement.png' %}" /> Hired Candidates</a
+        >
+      </li>
+    </ul>
+  </div>
+  <div class="rightSidebar">
+    <ul class="breadcrumb">
+      <li><a href="{% url 'monthly-subscription-view' %}">Hire candidate</a></li>
+      &nbsp; - &nbsp;
+      <li><a href="{% url 'select-technolgy-stack' %}">Technology Selection</a></li>
+      &nbsp; - &nbsp;
+      <li>Skills</li>
+    </ul>
+    <div class="trainingBox">
+      <h1>Skills</h1>
+      <div id="mainForm" class="skiilBox">
+        {% for stack in technology_stack %}
+						<ul name="{{stack.skills__name}}" class="addSkillMore">
+							<li>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    name="option[]" 
+                    id="checkbox{{stack.id}}"
+                    {% if stack.is_selected == 1 %} 
+                      checked=true
+                      value={{stack.id}}
+                    {% endif %}
+                    onclick="OnChecked('checkbox{{stack.id}}', '{{stack.id}}')"  
+                  />
+                  {{ stack.skills.name}}
+                <label>
+							</li>
+							<li>
+								<input 
+                  type="number" 
+                  name="no_of_candidate" 
+                  placeholder="Number of candidates" 
+                  min="0"
+                  {% if stack.no_of_candidate != 0 %} 
+                      value={{stack.no_of_candidate}}
+                  {% endif %} 
+                />
+							</li>
+							<li>
+								<input 
+                  type="number" 
+                  name="experience_in_years" 
+                  placeholder="Experience in years" 
+                  min="0"
+                  {% if stack.experience != 0 %} 
+                      value={{stack.experience}}
+                  {% endif %} 
+                />
+							</li>
+							<li>
+                <input 
+                  type="text" 
+                  name="searched_skills" 
+                  placeholder="Search Skill Set"
+                  {% if stack.skills_set != None %} 
+                      value={{stack.skills_set}}
+                  {% endif %} 
+                />
+              </li>
+						</ul>
+          {% endfor %}
+
+          <div class="skipBtn text-left pt-4 pb-4">
+            <button id="proceed_btn" class="btn btn-primary pull-right" >PROCEED<button>
+            
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %} {% block footer_scripts %}
+
+<script>
+  $("#proceed_btn").on('click', function(){
+    console.log("i am in process_btn")
+    let skills = [];
+    document.getElementsByClassName("addSkillMore").forEach(f => {
+      let obj = {};
+      f.querySelectorAll("input").forEach(element => obj[element.name] = element.value || "");
+      skills.push(obj)
+    })
+    
+    $.ajax({
+      url: "{% url 'skills-listing-view' %}",
+      method: "POST",
+      data: {
+        "skills": JSON.stringify(skills)
+      },
+      headers: {
+        "X-CSRFToken": "{{csrf_token}}"
+      },
+      success: function(res){
+        console.log("res",res)
+        var url = "{% url  'candidate-listing-view'  %}";
+        location.href = url
+      }
+    })
+  })
+
+  function OnChecked(id, value){
+    console.log("onchecdec", id, value)
+    var is_checked = $('#'+ id).is(':checked');
+    console.log("is_checked", is_checked) 
+    if(is_checked == true){
+      $('#' + id).val(value)
+    }
+    else{
+      $('#' + id).val("")
+    }
+  }
+
+</script>
+
+{%endblock footer_scripts%}
