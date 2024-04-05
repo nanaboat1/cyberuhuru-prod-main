@@ -33,10 +33,11 @@ from stats.views import (CertificateView, CourseDetailView, CourseView, StatesVi
 
 # Company Imports
 from company.views.views import (
-    CompanyProfileView, CompanyDashboardView, SubscriptionView, AnnualSubscriptionView, UpdateCompanyImageView,
-    MonthlySubscriptionView, SelectTechnologyStackView, TechnolgyStackView, RemoveTechnologyStack, SkillsListingView,
-    CandidateResumeListingView, HireCandidateView, PreviousRequestView, HiredCandidateView,
-    ReplacementRequestView, 
+     CompanyProfileView, CompanyDashboardView, SubscriptionView, AnnualSubscriptionView, UpdateCompanyImageView,
+     MonthlySubscriptionView,
+     SelectTechnologyStackView, TechnolgyStackView, RemoveTechnologyStack, SkillsListingView,
+     CandidateResumeListingView, HireCandidateView, PreviousRequestView, HiredCandidateView,
+     ReplacementRequestView, CandidatesView, CandidateDetailView, CertificationListAPIView, HireCandidateRequestView
 )
 from company.views.auth import (
     CompanyRegistrationView, CompanyLoginView, CompanyForgotPasswordView, ChangePasswordView,
@@ -98,6 +99,7 @@ urlpatterns = [
           TrainingEpisodeView.as_view(), name='training_episode'),
      path('candidate/certificate/', UserCertificateView.as_view(),
           name='candidate_certificate'),
+     path('api/candidate/certificate/', CertificationListAPIView.as_view(), name='certification-list'),
      path('candidate/upload/resume/', UploadResumeView.as_view(),
           name='candidate_upload_resume'),
      path('candidate/change/password/',
@@ -131,15 +133,28 @@ urlpatterns = [
           name="company_register"),
      path("company/annual-subscription/",
           AnnualSubscriptionView.as_view(), name="annual-subscription"),
-     path("company/monthly-subscription/",
-          MonthlySubscriptionView.as_view(), name="monthly-subscription"),
      path("company/profile-pic/update", UpdateCompanyImageView.as_view(), 
           name="company-pic-update"),
      path("company/select-technolgy-stack", SelectTechnologyStackView.as_view(), 
           name='select-technolgy-stack'),
-     path('company/view-monthlySubscription/', 
-               TemplateView.as_view(template_name='company_user/hire_candidate/monthly_subscription.html'),
-               name="monthly-subscription-view"),
+     path("company/monthly-subscription/",
+          MonthlySubscriptionView.as_view(), name="monthly-subscription"),
+     # path('company/view-monthlySubscription/',
+     #           TemplateView.as_view(template_name='company_user/hire_candidate/monthly_subscription.html'),
+     #           name="monthly-subscription-view"),
+     path(
+          'company/hire-candidates/',
+          CandidatesView.as_view(),
+          name='monthly-subscription-view'
+     ),
+     # Request to hire
+     path('company/hire-candidate/<int:candidate_id>/', HireCandidateRequestView.as_view(), name='hire_candidate_request'),
+
+     path(
+          'company/hire-candidates/<int:candidate_id>/',
+          CandidateDetailView.as_view(),
+          name='hire-candidate-detail'
+     ),
      path('company/technolgy-stack/', TechnolgyStackView.as_view(), 
           name="technolgy-stack"),
      path('company/remove-technology-stack/', RemoveTechnologyStack.as_view(), 
@@ -175,6 +190,8 @@ urlpatterns = [
      path('payment/process/', paypal_process_payment, name='payment_process'),
      path('payment/done/', payment_done, name='payment_done'),
      path('payment/canceled/', payment_canceled, name='payment_canceled'),
+
+
 ]
 
 urlpatterns = urlpatterns + \

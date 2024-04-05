@@ -1,0 +1,234 @@
+{% extends 'base_profile.html' %} 
+
+{% load static %} 
+
+{% block title %} Monthly Subscription {% endblock title %} 
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Hire Candidates</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}"> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="profileForm">
+        <!-- Display success messages -->
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+          <div class="eduDetail">	
+            <h2>Hire Candidates</h2>
+           <table class="table table-striped">
+             <thead class="thead-dark">
+                 <tr>
+                 <th width="30%" scope="col">NAME</th>
+                 <th width="26%" scope="col">EDUCATION LEVEL</th>
+                 <th width="36%" scope="col">CURRENT EMPLOYMENT STATUS</th>
+                 <th width="8%" scope="col">CERTIFICATES</th>
+                 </tr>
+             </thead>
+             <tbody>
+               {% for  candidate in candidates %}
+                 <tr>
+                     <td >
+                        {% if candidate.profile_photo %}
+                            <img src="{{ candidate.profile_photo.url }}" alt="Profile Picture" style="border-radius: 50%; width: 35px; height: 35px; margin-right: 10px;">
+                        {% else %}
+                            <img src="{% static 'img/user2.png' %}" alt="Placeholder Image" style="border-radius: 50%; width: 35px; height: 35px; margin-right: 10px;">
+                        {% endif %}
+                         <strong>{{ candidate.first_name }} {{ candidate.last_name }}</strong>
+                      </td>
+                     <td>{{ candidate.educational.last.course_type }}</td>
+                     <td>
+                         {% if candidate.experience.last.currently_working == 'Yes' %}
+                            Employed
+                        {% else %}
+                            Unemployed
+                        {% endif %}
+                     </td>
+                   <td class="penBtn"><a class="bg-primary py-2 px-4 rounded-pill text-white" href="{% url 'hire-candidate-detail' candidate.id %}">Click</a></td>
+                 </tr>
+               {% endfor %}
+             </tbody>
+           </table>
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+{% block footer_scripts %} 
+
+<script>
+
+  // Ready Event to add Subscription Plans and Make selected first plan
+  $(document).ready(function(){
+
+    // Declare variable that was used in ajax call
+    var url = "{% url 'monthly-subscription' %}"
+    var method = "GET"
+    var dataType = 'JSON'
+
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': "{{ csrf_token }}"     // Token used for authentication
+      },
+      success: function(res){
+        if(res.redirect){
+          var url = res.redirect
+          console.log(url)
+          window.location.href = url
+          
+        }
+        var subscriptions = res.subscriptions
+
+        // Create Options for Select Plan
+        for (var i=0; i < subscriptions.length; i++){
+          var list = $('<option id="plan'+ subscriptions[i].id + '"' + 'value="' + subscriptions[i].id + '">' + '* Upto ' + subscriptions[i].price__max_range + 
+            '</option>' );
+          $('#subscription_plan').append(list)
+        }
+
+        //  Make selected first element
+        $("#subscription_plan").prop("selectedIndex", 0);
+
+        // Identify Currency Symbol
+        if (subscriptions[0].price__currency == 'IND'){
+          var currency = '₹' 
+        }
+        else if (subscriptions[0].price__currency == 'USD'){
+          var currency = '$'
+        }
+        
+        // Update Plan Cost According to plan
+        $('#plan-cost').html(currency + ' ' + subscriptions[0].price__amount)
+      }
+    })
+  });
+
+  
+  $('select').on('change', function() {
+
+    // Declare variable that was used in ajax call
+    var url = "{% url 'monthly-subscription' %}" + "?plan_id=" + this.value
+    var method = "GET"
+    var dataType = 'JSON'
+
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': "{{ csrf_token }}"   // Token used for authentication
+      },
+      success: function(res){
+        if(res.subscription){
+          var subscription = res.subscription
+          $("#subscription_plan option[id=plan" + subscription.id + "]").attr("selected", "selected");
+          if (subscription.currency == 'IND'){
+            var currency = '₹' 
+          }
+          else if (subscription.currency == 'USD'){
+            var currency = '$'
+          }
+          $('#plan-cost').html(currency + ' ' + subscription.amount)
+        }
+        else{
+          console.log()
+        }
+      }
+    })
+  });
+
+
+  // Ajax to call on Click of Purchase Button
+  $('#purchase_btn').on('click', function(){
+
+    // Declare variable that was used in ajax call
+    var selected_plan = $('#subscription_plan').find(":selected").val();
+    var url = "{% url 'payment_process' %}?subscription_id=" + selected_plan
+    var method = "GET"
+    var dataType = 'JSON'
+
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': "{{ csrf_token }}"  // Token used for authentication
+      },
+      success: function(res){
+        console.log("jhvgcdvgsfsdgyu")
+        $('body').html(res)
+      }
+    })
+  })
+</script>
+
+
+{%endblock footer_scripts%}

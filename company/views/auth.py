@@ -2,17 +2,18 @@
 from django.views import View
 from django.contrib import messages
 from django.shortcuts import render
-from django.http import JsonResponse 
+from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
 
-# User Related Imports 
+from company.mailing import email_company_user_credentials
+# User Related Imports
 from users.models import User, Address
 
 # Company Related imports
 from company.models import Company
 from company.forms import (
-  CompanyRegistrationForm, CompanyLogin, CompanyForgotPassword,CompanyResetPasswordForm, ChangePasswordForm
+    CompanyRegistrationForm, CompanyLogin, CompanyForgotPassword, CompanyResetPasswordForm, ChangePasswordForm
 )
 from company.utils import check_company_authentication
 
@@ -20,7 +21,8 @@ from company.utils import check_company_authentication
 from stats.models import Countries, Industry, State, Cities, CompanyAddress
 from stats.mailing import email_user_forgot_password
 
-# Class based view wite here 
+
+# Class based view wite here
 
 class CompanyRegistrationView(View):
     form_class = CompanyRegistrationForm
@@ -45,9 +47,9 @@ class CompanyRegistrationView(View):
         '''
         context = {
             'status': False,
-			'message': 'Invalid Request',
-			'data': {},
-			'errors': {}
+            'message': 'Invalid Request',
+            'data': {},
+            'errors': {}
         }
         form = self.form_class(request.POST)
 
@@ -77,28 +79,28 @@ class CompanyRegistrationView(View):
                 form.add_error('country', f'Country Does Not Exist')
                 context['errors'] = form.errors
                 return JsonResponse(context, safe=False)
-                
+
             try:
                 state = State.objects.get(id=state_id)
             except Exception as e:
                 form.add_error('state', f'State Does Not Exist')
                 context['errors'] = form.errors
                 return JsonResponse(context, safe=False)
-                
+
             try:
                 city = Cities.objects.get(id=city_id)
             except Exception as e:
                 form.add_error('city', f'City Does Not Exist')
                 context['errors'] = form.errors
                 return JsonResponse(context, safe=False)
-                
+
             try:
                 industry = Industry.objects.get(id=industry_id)
             except Industry.DoesNotExist:
                 form.add_error('industry', f'Industry Does Not Exist')
                 context['errors'] = form.errors
                 return JsonResponse(context, safe=False)
-                
+
             # create user
             user = User.objects.create_user(**kwargs)
 
@@ -131,12 +133,12 @@ class CompanyRegistrationView(View):
             context['data'] = {'email': user.email_id}
             context['errors'] = {}
             return JsonResponse(context, safe=False)
-            
+
         else:
             print("in else means errors", form.errors)
             context['errors'] = form.errors
             return JsonResponse(context, safe=False)
-            
+
 
 class CompanyLoginView(View):
     form_class = CompanyLogin
@@ -206,7 +208,7 @@ class CompanyForgotPasswordView(View):
         template_name = 'users/forgot_password.html'
         context = {}
         user = request.user
- 
+
         if form.is_valid():
             email_id = request.POST.get('email_id')
             email_exists = User.objects.filter(email_id__iexact=email_id).exists()
@@ -228,8 +230,8 @@ class CompanyForgotPasswordView(View):
             context['errors'] = form.errors
             return JsonResponse(context, safe=False)
 
-class LogoutView(View):
 
+class LogoutView(View):
     initial = {'key': 'value'}
     template_name = 'stats/index.html'
 
@@ -237,16 +239,16 @@ class LogoutView(View):
         logout(request)
         return redirect('/')
 
-  
+
 class CompanyResetPasswordView(View):
     form_class = CompanyResetPasswordForm
-    
+
     initial = {'key': 'value'}
     template_name = 'company_user/company_reset_password.html'
 
     def get(self, request):
         form = self.form_class(initial=self.initial)
-      
+
         context = {
             'form': form
         }
@@ -265,11 +267,11 @@ class CompanyResetPasswordView(View):
             confirm_password = request.POST.get('confirm_password')
             if password == confirm_password:
                 user.set_password(confirm_password)
-                user.save()              
+                user.save()
                 return redirect('/company/login')
             else:
                 messages.error(request, f"Password & confirm Password doesn't match")
-                return render(request, self.template_name)   
+                return render(request, self.template_name)
         else:
             context['errors'] = form.errors
             return render(request, self.template_name, context)
@@ -284,15 +286,15 @@ class CompanyUserActivationView(View):
             token = request.GET.get('token')
             user = User.objects.get(token=token)
         except Exception as e:
-            print("Exception1: ",e)
+            print("Exception1: ", e)
 
-        try:    
+        try:
             if user.is_active:
                 print("User is already activated")
                 return redirect('/company/login/')
             else:
                 print("Activated the user")
-                user.is_active=True
+                user.is_active = True
                 user.save()
                 messages.success(request, 'Account activated successfully')
                 return redirect('/company/login/')
@@ -307,6 +309,7 @@ class ChangePasswordView(View):
     """
     This section is used to Change the password
     """
+
     def __init__(self):
         self.form_class = ChangePasswordForm
         self.template = 'company_user/company_profile.html'
@@ -334,7 +337,7 @@ class ChangePasswordView(View):
             old_password = request.POST.get('old_password')
             new_password = request.POST.get('new_password')
             is_correct = user.check_password(old_password)
-            
+
             if is_correct:
                 data = {}
                 user.set_password(new_password)
@@ -351,4 +354,3 @@ class ChangePasswordView(View):
             context['status'] = False
             context['errors'] = form.errors
             return JsonResponse(context, safe=False)
-

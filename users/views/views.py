@@ -12,7 +12,7 @@ from django.views import View
 from django.db.models import Q, F
 from django.contrib import messages
 from django.core import serializers
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -21,9 +21,10 @@ from django.core.paginator import Paginator
 
 # User Imports
 from users.utils import check_authentication, convertHtmlToPdf
-from users.models import (Training, User, Address, Agreement, TestAnswer, Test as UserTest, Certificate)
-from users.forms import (SignUpForm, LoginForm, UserForgotPassword, 
-                            ResetPasswordForm, ChangePasswordForm, SignedAgreementForm)
+from users.models import (Training, User, Address, Agreement, TestAnswer, Test as UserTest, Certificate,
+                          LicenseCertification)
+from users.forms import (SignUpForm, LoginForm, UserForgotPassword,
+                         ResetPasswordForm, ChangePasswordForm, SignedAgreementForm)
 
 # Stats Imports
 from stats.models import (AnswerChoices, CompanyAddress, Countries, Course, Questions, State, Cities, Test)
@@ -32,6 +33,7 @@ from stats.mailing import email_user_verification_link, email_user_forgot_passwo
 # company Imports 
 from company.utils import check_company_authentication
 from company.models import Advertisement
+
 
 class RegistrationView(View):
     form_class = SignUpForm
@@ -122,7 +124,7 @@ class RegistrationView(View):
                 res['data'] = {'email': email_id}
                 res['errors'] = {}
                 return JsonResponse(res, safe=False)
-                
+
             except Exception as e:
                 res['message'] = ''
                 res['data'] = {}
@@ -139,7 +141,7 @@ class LoginView(View):
     initial = {'key': 'value'}
 
     def get(self, request, *args, **kwargs):
-        
+
         form = self.form_class(initial=self.initial)
         company_address = CompanyAddress.objects.all()
         context = {
@@ -190,7 +192,7 @@ class ForgetPassword(View):
     template_name = 'users/forgot_password.html'
 
     def get(self, request, *args, **kwargs):
-        
+
         form = self.form_class(initial=self.initial)
         company_address = CompanyAddress.objects.all()
         context = {
@@ -205,7 +207,7 @@ class ForgetPassword(View):
         form = self.form_class(request.POST)
         context = {}
         user = request.user
- 
+
         if form.is_valid():
             email_id = request.POST.get('email_id')
             email_exists = User.objects.filter(email_id__iexact=email_id).exists()
@@ -218,7 +220,8 @@ class ForgetPassword(View):
                     context['email_id'] = email_id
                     return JsonResponse(context, safe=False)
                 else:
-                    context['error_message'] = f'Entered emailId is not registered with us as a Candidate, please enter valid emailId.'
+                    context[
+                        'error_message'] = f'Entered emailId is not registered with us as a Candidate, please enter valid emailId.'
                     return JsonResponse(context, safe=False)
             else:
                 context['errors'] = form.errors
@@ -234,7 +237,7 @@ class ResetPasswordView(View):
     template_name = 'users/reset_password.html'
 
     def get(self, request):
-                
+
         form = self.form_class(initial=self.initial)
         token = request.GET.get('token')
         user = User.objects.get(token=token)
@@ -248,22 +251,21 @@ class ResetPasswordView(View):
         form = self.form_class(request.POST)
         token = request.GET.get('token')
         user = User.objects.get(token=token)
-        context = {'form':form}
+        context = {'form': form}
 
         if form.is_valid():
             password = request.POST.get('password')
             confirm_password = request.POST.get('confirm_password')
 
             if password == confirm_password:
-        
                 user.set_password(confirm_password)
                 user.is_active = True
                 user.save()
-                return redirect('/login')  
+                return redirect('/login')
         else:
             context['errors'] = form.errors
             return render(request, self.template_name, context)
-            #return render(request, self.template_name)
+            # return render(request, self.template_name)
 
         return render(request, self.template_name)
 
@@ -280,22 +282,22 @@ class ChangeUserPasswordView(View):
             messages.error(request, f"Please login first")
             time.sleep(1)
             return redirect('/login/')
-            
+
         form = self.form_class(initial=self.initial)
         company_address = CompanyAddress.objects.all()
         context = {
-			'form': form,
-			'company_address' : company_address,
+            'form': form,
+            'company_address': company_address,
             'candidate_data': user
-		}
-        
+        }
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         company_address = CompanyAddress.objects.all()
         user = request.user
-        context = {'company_address': company_address, 'candidate_data' :user}
+        context = {'company_address': company_address, 'candidate_data': user}
         res = {
             'status': False,
             'errors': {}
@@ -313,7 +315,7 @@ class ChangeUserPasswordView(View):
                     user.save()
                     messages.success(request, f"Password Changed Successfully!!")
                     res['status'] = True
-                    return JsonResponse(res, safe=False) #redirect('/login')
+                    return JsonResponse(res, safe=False)  # redirect('/login')
                 else:
                     form.add_error('old_password', f'Entered old password is wrong!!')
                     res['errors'] = form.errors
@@ -321,11 +323,11 @@ class ChangeUserPasswordView(View):
             except Exception as e:
                 print("Exception in changing user password", e)
 
-        else:         
+        else:
             res['errors'] = form.errors
             return JsonResponse(res, safe=False)
 
- 
+
 class AgreementView(View):
     '''
     Candidate Agreement to Get and Post Information.
@@ -333,7 +335,7 @@ class AgreementView(View):
     template_name = 'users/agreement.html'
     initial = {'key': 'value'}
     form_class = SignedAgreementForm
-    
+
     def get_queryset(self, user):
         """
         This method is used to get objects through Authenticated user,
@@ -346,29 +348,27 @@ class AgreementView(View):
         except Agreement.DoesNotExist:
             return None, f'Agreement does not exist with this Candidate'
 
-    def get(self, request,  *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         This Method is used to Get Uploaded Agreement documents
         """
         user = check_authentication(request)
         if user is None:
             return redirect('/login/')
-        
+
         company_address = CompanyAddress.objects.all()
         context = {
-            'candidate_data' : user,
+            'candidate_data': user,
             'company_address': company_address
         }
-        
-        
+
         agreement, error = self.get_queryset(user)
         if error is not None:
             context['errors'] = error
             return render(request, self.template_name, context)
-    
+
         context['agreement'] = agreement
         return render(request, self.template_name, context)
-    
 
     def post(self, request, *args, **kwargs):
         """
@@ -402,7 +402,7 @@ class AgreementView(View):
             messages.success(request, f'File Uploaded successfully')
             return render(request, self.template_name, context)
         else:
-            context['errors'] =form.errors
+            context['errors'] = form.errors
             return render(request, self.template_name, context)
 
 
@@ -414,24 +414,23 @@ class UserCertificateView(View):
     template_name = 'users/user_certificate.html'
     initial = {'key': 'value'}
 
+    def get(self, request, *args, **kwargs):
 
-    def get(self, request,  *args, **kwargs):
-
-         # Check Authentication for user
+        # Check Authentication for user
         user = check_authentication(request)
 
         if user is None and (check_company_authentication(request) is None):
             return redirect('/login/')
         company_address = CompanyAddress.objects.all()
-        
+
         candidate_id = request.GET.get('candidate_id')
-        
+
         if candidate_id is not None:
             certificates = Certificate.objects.filter(
-                training__user=candidate_id
+                training__user=candidate_id,
             ).values(
-                course_title= F('training__course__course_title'),
-                certificate_image = F('image')
+                course_title=F('training__course__course_title'),
+                certificate_image=F('image')
             )
             context = {
                 'certificates': list(certificates)
@@ -439,17 +438,61 @@ class UserCertificateView(View):
             return JsonResponse(context, safe=False)
         else:
             certificates = Certificate.objects.filter(training__user=user)
+            license_certifications = LicenseCertification.objects.filter(user=user)
         context = {
             'candidate_data': user,
             'certificates': certificates,
-            'company_address': company_address
-        }  
+            'company_address': company_address,
+            'license_certifications': license_certifications,
+        }
 
         return render(request, self.template_name, context)
 
+    def post(self, request, *args, **kwargs):
+        user = check_authentication(request)
+        if user is None:
+            return redirect('/login/')
+
+        if request.method == 'POST':
+            try:
+                print(request.POST)
+                name = request.POST.get('name')
+                issuing_organization = request.POST.get('issuing-organization')
+                issue_date = request.POST.get('issue-date')
+                expiration_date = request.POST.get('expiration-date')
+                credential_id = request.POST.get('credential-id')
+                credential_url = request.POST.get('credential-url')
+
+                LicenseCertification.objects.create(
+                    user=user,
+                    name=name,
+                    issuing_organization=issuing_organization,
+                    issue_date=issue_date,
+                    expiration_date=expiration_date,
+                    credential_id=credential_id,
+                    credential_url=credential_url
+                )
+
+                messages.success(request, 'License/Certification added successfully.')
+                return redirect('candidate_certificate')
+
+            except ValueError as e:
+                # Handle ValueError (e.g., invalid data types or formats)
+                messages.error(request, str(e))
+                # Handle the error, e.g., render an error template or return a JSON response
+
+            except Exception as e:
+                # Handle other exceptions (e.g., database errors, network errors)
+                messages.error(request, str(e))
+                # Handle the error, e.g., render an error template or return a JSON response
+
+        messages.error(request, 'Invalid request method')
+        return redirect('candidate_certificate')
+        # return HttpResponseBadRequest('Invalid request method')
+
 
 class CandidateActivationView(View):
-    
+
     def get(self, request, *args, **kwargs):
 
         try:
@@ -457,11 +500,11 @@ class CandidateActivationView(View):
             user = User.objects.get(token=token)
         except Exception as e:
             pass
-        try:    
+        try:
             if user.is_active:
                 return redirect('/login/')
             else:
-                user.is_active=True
+                user.is_active = True
                 user.save()
                 messages.success(request, 'Account activated successfully')
                 return redirect('/login/')
@@ -472,23 +515,22 @@ class CandidateActivationView(View):
 
 
 class TestView(View):
-
     template_name = 'users/test/test.html'
 
-    def check_test_answer_exists(self, question,user,user_test):
+    def check_test_answer_exists(self, question, user, user_test):
 
         test_answer = TestAnswer.objects.filter(
-                                            question_id=question.id, 
-                                            user=user,
-                                            user_test=user_test
+            question_id=question.id,
+            user=user,
+            user_test=user_test
         )
-        
+
         return test_answer
 
     def get(self, request, *args, **kwargs):
-        
+
         user = check_authentication(request)
-        
+
         if user is None:
             return redirect('/login/')
         course_id = request.GET.get('course_id')
@@ -505,23 +547,23 @@ class TestView(View):
         context = {
             'question': question,
             'page_obj': page_obj,
-            'duration' : test.duration,
+            'duration': test.duration,
             'test_id': test.id,
-            'course_id': course_id, 
+            'course_id': course_id,
         }
-        
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        
+
         user = check_authentication(request)
 
         if user is None:
             return redirect('/login/')
-        
+
         question_id = request.GET.get('question_id', None)
         selected_answer = request.GET.get('selected_value', None)
-        
+
         if question_id is not None:
             try:
                 question = Questions.objects.get(id=question_id)
@@ -529,18 +571,18 @@ class TestView(View):
                 test_id = question.test.id
             except:
                 pass
-        
+
         course_id = question.test.course.id
         user_training = Training.objects.filter(user_id=user.id, course_id=course_id).first()
 
         user_test = UserTest.objects.filter(
-                                        training__user_id=user.id, 
-                                        training_id=user_training.id, 
-                                        is_submitted=False
+            training__user_id=user.id,
+            training_id=user_training.id,
+            is_submitted=False
         )
-        
+
         if len(user_test) == 0:
-            user_test = UserTest.objects.create(training_id = user_training.id)
+            user_test = UserTest.objects.create(training_id=user_training.id)
             user_test.test.add(test_id)
         else:
             user_test = user_test.first()
@@ -549,21 +591,21 @@ class TestView(View):
 
         if selected_answer is not None:
             if selected_answer.lower() == correct_answer.lower():
-                
+
                 if not test_answer.exists():
                     test_answer = TestAnswer.objects.create(
-                                question_id=question.id,
-                                answer=selected_answer,
-                                user_test_id=user_test.id,
-                                user_id=user.id
+                        question_id=question.id,
+                        answer=selected_answer,
+                        user_test_id=user_test.id,
+                        user_id=user.id
                     )
             else:
                 if test_answer.exists():
-                        test_answer.delete()
+                    test_answer.delete()
         else:
             if test_answer.exists():
-                test_answer.delete()    
-        
+                test_answer.delete()
+
         return render(request, self.template_name)
 
 
@@ -579,7 +621,7 @@ class CalculateResult(View):
         _time = request.GET.get('time')
         duration = request.GET.get('duration')
         test_id = request.GET.get('test_id')
-        modal_dict={}
+        modal_dict = {}
 
         # It is mandatory please don't remove it until new functionality
         time.sleep(2)
@@ -590,15 +632,15 @@ class CalculateResult(View):
             duration = duration.split(":")
             test_completed = timedelta(hours=int(_time[0]), minutes=int(_time[1]), seconds=int(_time[2]))
             test_duration = timedelta(hours=int(duration[0]), minutes=int(duration[1]), seconds=int(duration[2]))
-            time_taken = test_duration-test_completed
-            
+            time_taken = test_duration - test_completed
+
             test_obj = Test.objects.filter(id=test_id).first()
-            
+
             user_test = UserTest.objects.filter(training__user=user, test__id=test_obj.id).latest('created_at')
             test_answer_count = user_test.UserTest.count()
-            
-            candidate_percentage = (test_answer_count/test_obj.no_of_questions)*100
-            
+
+            candidate_percentage = (test_answer_count / test_obj.no_of_questions) * 100
+
             user_test.is_submitted = True
             user_test.percentage_attained = candidate_percentage
             user_test.time_taken = str(time_taken)
@@ -610,8 +652,8 @@ class CalculateResult(View):
                 'time_taken': str(time_taken),
                 'test_name': test_obj.name.title()
             }
-            
-            if  candidate_percentage >= test_obj.pass_percentage:
+
+            if candidate_percentage >= test_obj.pass_percentage:
                 training = user_test.training
                 value_dict['is_passed'] = 'PASS'
                 training.is_completed = True
@@ -620,7 +662,7 @@ class CalculateResult(View):
                     try:
                         convertHtmlToPdf('users/test/certificate_pdf.html', training, request)
                     except Exception as e:
-                        raiseExceptions("convertHtmlToPDF",e)
+                        raiseExceptions("convertHtmlToPDF", e)
             else:
                 value_dict['is_passed'] = 'FAIL'
 
@@ -661,14 +703,14 @@ class TestInstructionView(View):
             return redirect('/candidate/training/')
 
 
-class CompanyAdvertisement(View):    
+class CompanyAdvertisement(View):
     def get(self, request):
-        advert = Advertisement.objects.filter(job_title= "SSS")
+        advert = Advertisement.objects.filter(job_title="SSS")
         print("Advert", advert.values())
         return render(request, 'users/advertisement.html')
-        
+
 # def CompanyAdvertisement(request):
-    
+
 #     if request.method == 'GET':
 #         advert = Advertisement.objects.all()
 #         print("Advert", advert)

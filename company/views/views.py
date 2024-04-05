@@ -1,5 +1,10 @@
 # Python Imports
 from hashlib import new
+
+from django.urls import reverse
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from company.utils import check_company_authentication
 import json
 import datetime
@@ -9,15 +14,15 @@ from collections import defaultdict
 # Django Imports
 from django.views import View
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.forms.models import model_to_dict
-from django.shortcuts import render, redirect
-from django.db.models import Subquery, OuterRef, F, Sum
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Subquery, OuterRef, F, Sum, Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # User Related Imports
 from users.forms import ProfileImage
-from users.models import CandidateSkills, Training, User, Address, Skills, Experience
+from users.models import CandidateSkills, Training, User, Address, Skills, Experience, LicenseCertification
 
 # Company Related imports
 from company.mailing import email_hiring_request
@@ -37,11 +42,13 @@ from django.core.mail import send_mail
 
 import environ
 
+from users.serializers import LicenseCertificationSerializer, UserCertificationSerializer
+from users.utils import check_authentication
+
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
 )
-
 
 
 class CompanyProfileView(View):
@@ -139,12 +146,10 @@ class SubscriptionView(View):
 
 
 class CompanyDashboardView(View):
-
     initial = {'key': 'value'}
     template_name = 'company_user/company_dashboard.html'
 
     def get(self, request, *args, **kwargs):
-
         # Check Authentication For user
         user = check_company_authentication(request)
         if user is None:
@@ -213,50 +218,6 @@ class UpdateCompanyImageView(View):
             context['status'] = False
             context['errors'] = form.errors
             return JsonResponse(context, safe=False)
-
-
-class MonthlySubscriptionView(View):
-    """
-    Get & POST methods to get data of Monthly Subscription
-    """
-    template_name = "company_user/hire_candidate/monthly_subscription.html"
-
-    def get(self, request):
-        """
-        Get Method to get Subscription data
-        """
-        context = {}
-
-        # Check Authentication For user
-        user = check_company_authentication(request)
-        if user is None:
-            context['redirect'] = '/company/login'
-            return JsonResponse(context, safe=True)
-
-        is_active = validate_monthly_subscription(user)
-        if is_active:
-            context['redirect'] = '/company/select-technolgy-stack'
-            return JsonResponse(context, safe=True)
-
-        plan_id = request.GET.get('plan_id')
-        if plan_id is not None:
-            try:
-                subscription = Subscription.objects.get(id=plan_id)
-                context['subscription'] = {
-                    'id': subscription.id,
-                    'type': subscription.type,
-                    'max_range': subscription.price.max_range,
-                    'amount': subscription.price.amount,
-                    'currency': subscription.price.currency
-                }
-            except:
-                context["errors"] = "Plan not found with this Plan id"
-            return JsonResponse(context, safe=False)
-        else:
-            subscription_qs = Subscription.objects.filter(type='MONTHLY').values(
-                'id', 'description', 'price__currency', 'price__max_range', 'price__amount')
-            context["subscriptions"] = list(subscription_qs)
-            return JsonResponse(context, safe=True)
 
 
 class SelectTechnologyStackView(View):
@@ -459,13 +420,13 @@ class CandidateResumeListingView(View):
             ).values(
                 'user__pk'
             ).annotate(
-                exp=Sum(F('end_date')-F('joining_date'))
+                exp=Sum(F('end_date') - F('joining_date'))
             ).values('exp')
 
             qs = candidate_qs.annotate(
                 duration=Subquery(experience)
             ).filter(
-                duration__gt=datetime.timedelta(stack['experience']*365, 0, 0)
+                duration__gt=datetime.timedelta(stack['experience'] * 365, 0, 0)
             )
 
             if len(qs_list) > 0:
@@ -580,11 +541,12 @@ class HireCandidateView(View):
                 status_id=HireStatus.PENDING
             )
             user_dict['username'] = created_candidate.candidate.first_name + \
-                created_candidate.candidate.last_name
+                                    created_candidate.candidate.last_name
             user_dict['email'] = created_candidate.candidate.email_id
             users_list.append(user_dict)
 
-        context['message'] = 'Thank you for your submission. We are reviewing your request and will get back to you ASAP.'
+        context[
+            'message'] = 'Thank you for your submission. We are reviewing your request and will get back to you ASAP.'
 
         if context['errors'] is None:
             email_hiring_request(users_list, company=user.company_user.first())
@@ -609,6 +571,211 @@ class PreviousRequestView(View):
         }
         return render(request, self.template_name, context)
 
+
+class MonthlySubscriptionView(View):
+    """
+    Get & POST methods to get data of Monthly Subscription
+    """
+    template_name = "company_user/hire_candidate/monthly_subscription.html"
+
+    def get(self, request):
+        """
+        Get Method to get Subscription data
+        """
+        context = {}
+
+        # Check Authentication For user
+        user = check_company_authentication(request)
+        if user is None:
+            context['redirect'] = '/company/login'
+            return JsonResponse(context, safe=True)
+
+        is_active = validate_monthly_subscription(user)
+        if is_active:
+            context['redirect'] = '/company/select-technolgy-stack'
+            return JsonResponse(context, safe=True)
+
+        plan_id = request.GET.get('plan_id')
+        if plan_id is not None:
+            try:
+                subscription = Subscription.objects.get(id=plan_id)
+                context['subscription'] = {
+                    'id': subscription.id,
+                    'type': subscription.type,
+                    'max_range': subscription.price.max_range,
+                    'amount': subscription.price.amount,
+                    'currency': subscription.price.currency
+                }
+            except:
+                context["errors"] = "Plan not found with this Plan id"
+            return JsonResponse(context, safe=False)
+        else:
+            subscription_qs = Subscription.objects.filter(type='MONTHLY').values(
+                'id', 'description', 'price__currency', 'price__max_range', 'price__amount')
+            context["subscriptions"] = list(subscription_qs)
+            return JsonResponse(context, safe=True)
+
+
+class CandidatesView(View):
+    """
+    This class used to get Hired Candidate list with Get method
+    """
+    template_name = "company_user/hire_candidate/candidates.html"
+
+    def get(self, request):
+        # Check Authentication For user
+        user = check_company_authentication(request)
+        if user is None:
+            return redirect('/company/login/')
+
+        # Variable declaration
+        context = {
+            'status': True,
+            'errors': None,
+            'search': ''
+        }
+
+        search = request.GET.get('search')
+
+        candidates = User.objects.filter(is_candidate_user=True, is_active=True)
+        #
+        # # Exclude hired candidates
+        # candidates = candidates.exclude(
+        #     Q(hired_candidate__isnull=False) | Q(hired_candidate__status__name='APPROVED')
+        # )
+
+        # candidates = User.objects.filter(
+        #     Q(is_candidate_user=True),
+        #     ~Q(hired_candidate__isnull=False),  # Exclude hired candidates
+        #     Q(is_active=True)  # Include only active candidates
+        # )
+
+        # candidates = User.objects.filter(is_candidate_user=True, is_active=True).exclude(
+        #     hired_candidate__isnull=False
+        # )
+
+        # candidates = User.objects.filter(is_candidate_user=True).exclude(is_active=False)
+        # hired_candidate = HireCandidate.objects.filter(
+        #     company__user_id=user.id,
+        #     status_id=HireStatus.APPROVED
+        # )
+
+        if search is not None:
+            candidates = candidates.filter(
+                candidate__first_name__icontains=search
+            )
+            context['search'] = search
+
+        # Add Pagination Candidate user List
+        page = request.GET.get('page', 1)
+        # take queryset and size of page as an argument
+        paginator = Paginator(candidates, 2)
+        try:
+            candidates = paginator.page(page)
+        except PageNotAnInteger:
+            candidates = paginator.page(1)
+        except EmptyPage:
+            candidates = paginator.page(paginator.num_pages)
+
+        context['candidates'] = candidates
+
+        return render(request, self.template_name, context)
+
+
+class CandidateDetailView(View):
+
+    template_name = "company_user/hire_candidate/candidate.html"
+
+    # Checking if company has already sent a hire request to the candidate
+    def has_hire_request(self, company_user, candidate):
+        try:
+            HireCandidate.objects.get(candidate=candidate, company__user=company_user)
+            return True
+        except HireCandidate.DoesNotExist:
+            return False
+
+    def get(self, request, candidate_id):
+        user = check_company_authentication(request)
+        if user is None:
+            return redirect('/company/login/')
+
+        context = {
+            'status': True,
+            'errors': None,
+        }
+
+        candidate = get_object_or_404(User, pk=candidate_id, is_candidate_user=True, is_active=True)
+
+        # Check if company has already sent a hire request to the candidate
+        company_has_hire_request = self.has_hire_request(company_user=user, candidate=candidate)
+
+        license_certifications = LicenseCertification.objects.filter(user=candidate_id)
+
+        context['company_has_hire_request'] = company_has_hire_request
+
+        # Add candidate details to the context
+        context['license_certifications'] = license_certifications
+
+        # Add candidate details to the context
+        context['candidate'] = candidate
+
+        # Add candidate's education details
+        education_details = candidate.educational.all()
+        context['education_details'] = education_details
+
+        # Add candidate's work experience details
+        work_experiences = candidate.experience.all()
+        context['work_experiences'] = work_experiences
+
+        # Add candidate's skills
+        skills = candidate.user_skills.all()
+        context['skills'] = skills
+
+        # Add candidate's resume
+        resume = candidate.resume.first()
+        context['resume'] = resume
+
+        return render(request, self.template_name, context)
+
+
+class CertificationListAPIView(APIView):
+    def get(self, request, format=None):
+        users = User.objects.filter(is_candidate_user=True, is_active=True)
+        serializer = UserCertificationSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+class HireCandidateRequestView(View):
+    def post(self, request, *args, **kwargs):
+        candidate_id = kwargs['candidate_id']
+        candidate = get_object_or_404(User, id=candidate_id)
+
+        if not request.user.is_company_user:
+            messages.error(request, 'You are not authorized to perform this action.')
+            return redirect('/')
+
+        pending_status, _ = HireStatus.objects.get_or_create(
+            id=HireStatus.PENDING,
+            defaults={'name': 'PENDING', 'status_order': 1}
+        )
+        # # Get or create APPROVED HireStatus
+        # approved_status, _ = HireStatus.objects.get_or_create(
+        #     id=HireStatus.APPROVED,
+        #     defaults={'name': 'APPROVED', 'status_order': 2}
+        # )
+        #
+        # # Get or create REJECTED HireStatus
+        # rejected_status, _ = HireStatus.objects.get_or_create(
+        #     id=HireStatus.REJECTED,
+        #     defaults={'name': 'REJECTED', 'status_order': 3}
+        # )
+
+
+        company = Company.objects.get(user=request.user)
+        hire_candidate = HireCandidate(candidate=candidate, company=company, status=pending_status)
+        hire_candidate.save()
+        messages.success(request, 'Hire request sent successfully.')
+        return redirect('monthly-subscription-view')
 
 class HiredCandidateView(View):
     """
@@ -759,10 +926,12 @@ def AdvertisementView(request):
         filter = request.POST.get('Filter')
 
         contact = Advertisement(job_title=job_title, workplace_title=workplace_title, job_location=job_location,
-                                company_name=company_name, description_of_job=description_of_job, company=comp_id, filter=filter)
+                                company_name=company_name, description_of_job=description_of_job, company=comp_id,
+                                filter=filter)
         contact.save()
 
     return render(request, 'company_user/hire_candidate/advertisement.html')
+
 
 def Send_request(request):
     send_mail(
@@ -774,6 +943,7 @@ def Send_request(request):
     )
     return redirect('/company/recommendation_candidate/')
 
+
 class RecommendationCandidateView(View):
     '''
     Recommendation of candidate to the Company.
@@ -782,7 +952,7 @@ class RecommendationCandidateView(View):
     template_name = 'company_user/hire_candidate/recommended_candidate.html'
     initial = {'key': 'value'}
 
-    def get(self, request,  *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         In this Method we first get Selected Skills list,
         and filter courses according to selected skills list and called 'Recommended course'
@@ -820,8 +990,7 @@ class RecommendationCandidateView(View):
                         if val == di:
                             # print('value of Key ------>>>>', key)
                             candidate_list[data].append(key)
-        
-        
+
         recommended_candidate_data = []
         recommended_candidate_email = []
         recommended_candidate_phone = []
@@ -835,7 +1004,7 @@ class RecommendationCandidateView(View):
                     cand_mail_address = User.objects.get(id=abc).email_id
                     cand_phone_number = User.objects.get(id=abc).phone_number
                     cand_skill = Training.objects.filter(user_id=abc).values_list('course_id__course_title')
-                    
+
                     recommended_candidate_data.append(cand_name)
                     recommended_candidate_email.append(cand_mail_address)
                     recommended_candidate_phone.append(cand_phone_number)
@@ -846,11 +1015,12 @@ class RecommendationCandidateView(View):
 
         # Save data to the RecommendationCandidate model
         for candidate_name, skills in zip(recommended_candidate_data, new_list):
-            render_data = RecommendationCandidate(candidate_name=candidate_name, candidate_skill=skills, company_name=user)
+            render_data = RecommendationCandidate(candidate_name=candidate_name, candidate_skill=skills,
+                                                  company_name=user)
             render_data.save()
         print('recommended_candidate_data', recommended_candidate_data)
         print("new_list", new_list)
-        
+
         context = {
             'candidate_data': recommended_candidate_data,
             'candidate_email': recommended_candidate_email,
@@ -867,22 +1037,20 @@ def HiringCandidateView(request):
         user = check_company_authentication(request)
         if user is None:
             return redirect('/company/login/')
-        
+
         print("--------------+++++++++-----------------------")
         RecommendedCandidate = RecommendationCandidate.objects.all()
         print("recommended_candidate_data", RecommendedCandidate)
         # recommended_candidate_data = RecommendationCandidateView.request.get('candidate_data')
         # print("recommended_candidate_data", recommended_candidate_data)
         # if request.method == 'POST':
-     
-  
+
         # candidate_id =RecommendationCandidateView
-    
+
         # print("recommended_candidate_data", recommended_candidate_data)
         # recommended_candidate_skill = RecommendationCandidateView.recommended_candidate_skill
         # print("recommended_candidate_skill", recommended_candidate_skill)
-        
-        
+
         # render_data = RecommendationCandidate(candidate_name=RecommendationCandidateView,candidate_skill = recommended_candidate_skill[:1], company_name = user )
         # render_data.save()
     if request.method == 'POST':

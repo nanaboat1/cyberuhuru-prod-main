@@ -80,37 +80,65 @@
       </div>
       <div class="col-md-9">
         <div class="profileForm">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
             <div class="perInfo">
               <div class="d-flex align-items-center justify-content-between"> <h2 class="mb-0"> Certification</h2>  <a class="addLic" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Add License</a></div>
              <hr class="my-5">
               <div class="row table-bordered">
-                <div class="col-md-4">
+              
+                  {% for lc in license_certifications %}
+                      <div class="col-md-4">
                   <div class="certificate d-flex align-items-center">
-                    <figure><img src={% static "latest_ui/images/certi-1.webp" %} class="img-fluid" alt=""></figure>
+                  <figure>
+                        {% if forloop.counter|divisibleby:2 %}
+                            <img src="{% static 'latest_ui/images/certi-1.webp' %}" class="img-fluid" alt="">
+                        {% else %}
+                            <img src="{% static 'latest_ui/images/certi-2.webp' %}" class="img-fluid" alt="">
+                        {% endif %}
+                    </figure>
                     <div class="cerInfo">
-                      <a href=""><h3>Credly Platform Practitoner</h3></a>
-                      <p>Credly</p>
+                      <a href=""><h3>{{ lc.name | title }}</h3></a>
+                      <p>{{ lc.issuing_organization }}</p>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <div class="certificate d-flex align-items-center">
-                    <figure><img src={% static "latest_ui/images/certi-2.webp"%} class="img-fluid" alt=""></figure>
-                    <div class="cerInfo">
-                      <a href=""><h3>Credly Platform Practitoner</h3></a>
-                      <p>Credly</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="certificate d-flex align-items-center">
-                    <figure><img src={% static "latest_ui/images/certi-3.webp" %} class="img-fluid" alt=""></figure>
-                    <div class="cerInfo">
-                      <a href=""><h3>Credly Platform Practitoner</h3></a>
-                      <p>Credly</p>
-                    </div>
-                  </div>
-                </div>
+                  {% empty %}
+                  	<h4 class="text-center"> No licenses found. Please add licenses to view them here</h4>
+                  {% endfor %}
+                  
+                  {#                <div class="col-md-4">#}
+{#                  <div class="certificate d-flex align-items-center">#}
+{#                    <figure><img src={% static "latest_ui/images/certi-1.webp" %} class="img-fluid" alt=""></figure>#}
+{#                    <div class="cerInfo">#}
+{#                      <a href=""><h3>Credly Platform Practitoner</h3></a>#}
+{#                      <p>Credly</p>#}
+{#                    </div>#}
+{#                  </div>#}
+{#                </div>#}
+{#                <div class="col-md-4">#}
+{#                  <div class="certificate d-flex align-items-center">#}
+{#                    <figure><img src={% static "latest_ui/images/certi-2.webp"%} class="img-fluid" alt=""></figure>#}
+{#                    <div class="cerInfo">#}
+{#                      <a href=""><h3>Credly Platform Practitoner</h3></a>#}
+{#                      <p>Credly</p>#}
+{#                    </div>#}
+{#                  </div>#}
+{#                </div>#}
+{#                <div class="col-md-4">#}
+{#                  <div class="certificate d-flex align-items-center">#}
+{#                    <figure><img src={% static "latest_ui/images/certi-3.webp" %} class="img-fluid" alt=""></figure>#}
+{#                    <div class="cerInfo">#}
+{#                      <a href=""><h3>Credly Platform Practitoner</h3></a>#}
+{#                      <p>Credly</p>#}
+{#                    </div>#}
+{#                  </div>#}
+{#                </div>#}
               </div>
             </div>
 
@@ -174,37 +202,38 @@
       <div class="modal-body">
         <h2>Add License or Certification</h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <form role="form" class="cnForm mt-4">
+        <form role="form" class="cnForm mt-4" method="post" action="{% url 'candidate_certificate' %}">
+            {% csrf_token %}
           <div class="row">
             <div class="col-md-12 form-group mb-4">
-              <label for="">Name</label>
-              <input type="text" class="form-control" id="" name="" placeholder="Name" >
+              <label for="name">Name</label>
+              <input required type="text" class="form-control" id="name" name="name" placeholder="Name" >
             </div>
             <div class="col-md-12 form-group mb-4">
-              <label for="">Issuing Organization</label>
-              <input type="text" class="form-control" id="" name="" placeholder="Name" >
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12"><label for="">Issue Date</label></div>
-            <div class="col-md-12 form-group mb-4">
-              <input type="date" class="form-control" id="" name="" placeholder="Date" >
+              <label for="issuing_organization">Issuing Organization</label>
+              <input required type="text" class="form-control" id="issuing_organization" name="issuing-organization" placeholder="Name" >
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12"><label for="">Expiration Date</label></div>
+            <div class="col-md-12"><label for="issue-date">Issue Date</label></div>
             <div class="col-md-12 form-group mb-4">
-              <input type="date" class="form-control" id="" name="" placeholder="Date" >
+              <input required type="date" class="form-control" id="issue-date" name="issue-date" placeholder="Date" >
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12"><label for="expiration-date">Expiration Date</label></div>
+            <div class="col-md-12 form-group mb-4">
+              <input type="date" class="form-control" id="expiration-date" name="expiration-date" placeholder="Date" >
             </div>
           </div>
           <div class="row">
             <div class="col-md-6 form-group mb-4">
-              <label for="">Credential ID</label>
-              <input type="text" class="form-control" id="" name="" placeholder="" >
+              <label for="credential-id">Credential ID</label>
+              <input type="text" class="form-control" id="credential-id" name="credential-id" placeholder="" >
             </div>
             <div class="col-md-6 form-group mb-4">
-              <label for="">Credential URL</label>
-              <input type="url" class="form-control" id="" name="" placeholder="" >
+              <label for="credential-url">Credential URL</label>
+              <input type="url" class="form-control" id="credential-url" name="credential-url" placeholder="" >
             </div>
           </div>
           <h2>Add Skills</h2>
@@ -216,7 +245,8 @@
               
             </div>
             <div class="col-md-6 form-group mb-4">
-              <button type="button" id="submit" name="submit" class="btn btn-primary pull-right">Submit</button>
+              <button type="submit" name="submit" class="btn btn-primary pull-right">Submit</button>
+{#              <button type="button" id="submit" name="submit" class="btn btn-primary pull-right">Submit</button>#}
             </div>
           </div>
          
@@ -249,13 +279,13 @@ position: 'right',
 </script> 
 <!-- slider Top --> 
 <script type="text/javascript" src={% static "latest_ui/js/owl.carousel.js" %}></script> 
-<script>
-const actualBtn = document.getElementById('actual-btn');
-const fileChosen = document.getElementById('file-chosen');
-actualBtn.addEventListener('change', function(){
-  fileChosen.textContent = this.files[0].name
-})
-</script> 
+{#<script>#}
+{#const actualBtn = document.getElementById('actual-btn');#}
+{#const fileChosen = document.getElementById('file-chosen');#}
+{#actualBtn.addEventListener('change', function(){#}
+{#  fileChosen.textContent = this.files[0].name#}
+{#})#}
+{#</script> #}
 <script>
   const header = document.querySelector(".page-header");
 const toggleClass = "is-sticky";

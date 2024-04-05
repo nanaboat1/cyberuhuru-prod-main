@@ -1,0 +1,349 @@
+{% extends 'base_profile.html' %}
+{% load custom_filters %}
+
+{% load static %} 
+
+{% block title %} Monthly Subscription {% endblock title %}
+
+<style>
+    h2, h3, h5 {
+        font-weight: bold;
+    }
+
+    .badge {
+        font-weight: normal;
+        font-size: 0.9rem;
+    }
+</style>
+
+{% block content %}
+<section class="inHeader">
+  <div class="pattern-layer-one" style="background-image: url('{% static "latest_ui/images/col-bgimage-1.jpg" %}');"></div>
+  <div class="container position-relative">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1>Company</h1>
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Hire Candidates</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mainProfile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar">
+          <ul class="lftMenu">
+            <li>
+              <a href="{% url 'company_dashboard' %}">
+                <img src="{% static 'img/das-icon.png' %}"> 
+                  Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'company_profile' %}" class="active">
+                <img src="{% static 'img/edit.png' %}" alt=""> 
+                Company Profile
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'monthly-subscription-view' %}">
+                <img src="{% static 'img/certi.png' %}">
+                Hire Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'previous-request' %}">
+                <img src="{% static 'img/certi.png' %}"> 
+                Previous Requests
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'hired-candidate-list' %}">
+                <img src="{% static 'img/Agreement.png' %}"> 
+                Hired Candidates
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'advertisement_by_company' %}">
+                  <img src="{% static 'img/das-icon.png' %}" /> Advertisement</a>
+              </li>
+              <li>
+                <a href="{% url 'recommendation_candidate_for_company' %}" >
+                  <img src="{% static 'img/Agreement.png' %}" /> Recommended Candidates</a>
+              </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="profileForm">
+          <div class="eduDetail">
+          
+          <form class="text-end " method="POST" action="{% url 'hire_candidate_request' candidate_id=candidate.id %}">
+                {% csrf_token %}
+                <button {% if company_has_hire_request %}
+                	disabled
+                {% endif %}  class="rounded-pill text-white py-2 px-4 fs-5 fw-bold {% if company_has_hire_request %}
+                	bg-secondary {% else %} bg-primary
+                {% endif %}" type="submit"
+                >Send Hire Request</button>
+          </form>
+          
+          <!-- Display success messages -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="success">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        
+            <!-- Display error messages -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="error">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+          
+            <div class="row mt-5">
+                <div class="col-md-4 text-center">
+                    {% if candidate.profile_photo %}
+                    <img src="{{ candidate.profile_photo.url }}" alt="{{ candidate.first_name }}" class="img-fluid rounded-circle mb-3" height="150" width="150">
+                    {% else %}
+                    <img src="{% static 'img/user2.png' %}" alt="Placeholder" class="img-fluid rounded-circle mb-3" height="150" width="150">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h2 class="mb-4">{{ candidate.first_name }} {{ candidate.last_name }}</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Email</strong></p>
+                            <p class="mb-4">{{ candidate.email_id | hide_email  }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Phone</strong></p>
+                            <p class="mb-4">{{ candidate.phone_number | hide_phone  }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
+                <h3 class="mb-3">Education</h3>
+                <div class="row gap-2">
+                    {% for education in education_details %}
+                    <div class="col-12 col-md-5 card">
+                        <div class="card-body">
+                            <h5 class="card-title"> <span class="text-capitalize">{{ education.highest_qualification }}</span> in {{ education.course_type }}</h5>
+                            <p class="card-text">{{ education.institute }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+          <div class="mt-5">
+                <h3 class="mb-3">Work Experience</h3>
+                <div class="row gap-2">
+                    {% for experience in work_experiences %}
+                        <div class="col-12 col-md-5 card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ experience.designation }} at {{ experience.company_name }}</h5>
+                                <p class="card-text">{{ experience.joining_date }} - {{ experience.end_date }}</p>
+                                <p class="card-text">{{ experience.description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                </div>
+            </div>
+          <div class="row mt-5">
+            <div class="col-md-6">
+                <h3 class="mb-3">Skills</h3>
+                <div class="d-flex flex-wrap">
+                    {% for skill in skills %}
+                    <span class="badge bg-primary me-2 mb-2">{{ skill.skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                {% if resume %}
+                <h3 class="mb-3">Resume</h3>
+                <a href="{{ resume.resume.url }}" target="_blank" class="btn btn-outline-primary">View Resume</a>
+                {% endif %}
+            </div>
+        </div>
+          <div class="row mt-5">
+            <div class="col-md-12">
+                <h3 class="mb-3">Certifications</h3>
+                {% if certificates %}
+                <div class="row">
+                    {% for certificate in certificates %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if certificate.image %}
+                            <img src="{{ certificate.image.url }}" class="card-img-top" alt="{{ certificate.training.course.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ certificate.training.course.name }}</h5>
+                                {% if certificate.file %}
+                                <a href="{{ certificate.file.url }}" target="_blank" class="btn btn-primary">View Certificate</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No certificates available.</p>
+                {% endif %}
+            </div>
+        </div>
+          <div class="row mt-5">
+    <div class="col-md-12">
+        <h3 class="mb-3">License</h3>
+        {% if license_certifications %}
+        <div class="row gap-2">
+            {% for license in license_certifications %}
+            <div class="col-md-5 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ license.name }}</h5>
+                        <p class="card-text"><strong>Issuing Organization:</strong> {{ license.issuing_organization }}</p>
+                        <p class="card-text"><strong>Issue Date:</strong> {{ license.issue_date }}</p>
+                        <p class="card-text"><strong>Expiration Date:</strong> {{ license.expiration_date }}</p>
+                        <p class="card-text"><strong>Credential ID:</strong> {{ license.credential_id }}</p>
+                        <p class="card-text"><strong>Credential URL:</strong> <a href="{{ license.credential_url }}">{{ license.credential_url }}</a></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+                {% else %}
+                <p>No license available.</p>
+                {% endif %}
+            </div>
+        </div>
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+{% block footer_scripts %} 
+
+<script>
+
+  // Ready Event to add Subscription Plans and Make selected first plan
+  $(document).ready(function(){
+
+    // Declare variable that was used in ajax call
+    var url = "{% url 'monthly-subscription' %}"
+    var method = "GET"
+    var dataType = 'JSON'
+
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': "{{ csrf_token }}"     // Token used for authentication
+      },
+      success: function(res){
+        if(res.redirect){
+          var url = res.redirect
+          console.log(url)
+          window.location.href = url
+          
+        }
+        var subscriptions = res.subscriptions
+
+        // Create Options for Select Plan
+        for (var i=0; i < subscriptions.length; i++){
+          var list = $('<option id="plan'+ subscriptions[i].id + '"' + 'value="' + subscriptions[i].id + '">' + '* Upto ' + subscriptions[i].price__max_range + 
+            '</option>' );
+          $('#subscription_plan').append(list)
+        }
+
+        //  Make selected first element
+        $("#subscription_plan").prop("selectedIndex", 0);
+
+        // Identify Currency Symbol
+        if (subscriptions[0].price__currency == 'IND'){
+          var currency = '₹' 
+        }
+        else if (subscriptions[0].price__currency == 'USD'){
+          var currency = '$'
+        }
+        
+        // Update Plan Cost According to plan
+        $('#plan-cost').html(currency + ' ' + subscriptions[0].price__amount)
+      }
+    })
+  });
+
+  
+  $('select').on('change', function() {
+
+    // Declare variable that was used in ajax call
+    var url = "{% url 'monthly-subscription' %}" + "?plan_id=" + this.value
+    var method = "GET"
+    var dataType = 'JSON'
+
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': "{{ csrf_token }}"   // Token used for authentication
+      },
+      success: function(res){
+        if(res.subscription){
+          var subscription = res.subscription
+          $("#subscription_plan option[id=plan" + subscription.id + "]").attr("selected", "selected");
+          if (subscription.currency == 'IND'){
+            var currency = '₹' 
+          }
+          else if (subscription.currency == 'USD'){
+            var currency = '$'
+          }
+          $('#plan-cost').html(currency + ' ' + subscription.amount)
+        }
+        else{
+          console.log()
+        }
+      }
+    })
+  });
+
+
+  // Ajax to call on Click of Purchase Button
+  $('#purchase_btn').on('click', function(){
+
+    // Declare variable that was used in ajax call
+    var selected_plan = $('#subscription_plan').find(":selected").val();
+    var url = "{% url 'payment_process' %}?subscription_id=" + selected_plan
+    var method = "GET"
+    var dataType = 'JSON'
+
+    // Ajax call
+    $.ajax({
+      url: url,
+      method: method,
+      header: {
+        'X-CSRFToken': "{{ csrf_token }}"  // Token used for authentication
+      },
+      success: function(res){
+        console.log("jhvgcdvgsfsdgyu")
+        $('body').html(res)
+      }
+    })
+  })
+</script>
+
+
+{%endblock footer_scripts%}

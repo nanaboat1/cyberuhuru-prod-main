@@ -86,18 +86,21 @@ class CompanyAdmin(admin.ModelAdmin):
 	def process_account_activate(self, request, obj, *args, **kwargs):
 		company_user = Company.objects.get(company_name=obj)
 		user = company_user.user
+		print("Savings company to user")
 		user.save()
 
 		if user.is_company_user == True and user.is_active == False:
 			password = User.objects.make_random_password()
-			
 			user.set_password(password)
+			print(f"Company Credentials email {user.email_id}  password {password}")
 			user.is_active = True
 			user.save()
 			email_company_user_credentials(user, password)
 			messages.success(request, 'Mail Send successfully.')
+			print("Mail Send successfully.")
 		else:
 			messages.warning(request, "User's account is already activated ")
+			print("User's account is already activated")
 		return redirect(request.META['HTTP_REFERER'])
 
 	def get_urls(self):

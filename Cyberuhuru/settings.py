@@ -168,6 +168,10 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # SMPT CREDENTIALS
 EMAIL_DRIVER = env('EMAIL_DRIVER')
 EMAIL_HOST = env('EMAIL_HOST')
@@ -216,9 +220,9 @@ PAYAL_MODE = env('PAYPAL_MODE'),
 PAYPAL_TEST = True
 PAYPAL_RECEIVER_EMAIL = env('PAYPAL_RECEIVER_EMAIL')
 
-USE_TZ = True
+# USE_TZ = True
 
 
-ADMIN_EMAIL = ['cyberUhuru@yopmail.com']
+# ADMIN_EMAIL = ['cyberUhuru@yopmail.com']
 
 CLEAR_CACHE_ON_RESTART = True

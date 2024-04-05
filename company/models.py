@@ -6,6 +6,7 @@ from users.models import BaseModel, CandidateSkills
 from users.constants import CURRENCY_CHOICES, SUBSCRIPTION_TYPE_CHOICES
 from users.models import User, Training
 
+
 class Company(models.Model):
     company_name = models.CharField(max_length=25, blank=True, null=True)
     industry = models.ForeignKey('stats.Industry', on_delete=models.CASCADE,
@@ -15,20 +16,20 @@ class Company(models.Model):
         'users.Address', on_delete=models.CASCADE, related_name='company_address', null=True)
     user = models.ForeignKey(
         'users.User', on_delete=models.CASCADE, related_name='company_user', null=True)
-    
+
     def __str__(self):
         return self.company_name
 
     @property
     def establish_date(self):
         return self.establish_at.strftime("%Y-%m-%d")
-    
+
     def is_subscribed(self):
         if self.user.user_subscriptions.exists():
             subscription = self.user.user_subscriptions.filter(is_paid=True, subscription__type='YEARLY')
             if len(subscription) > 0:
                 latest_info = subscription.latest('created_at')
-                if latest_info.end_date :
+                if latest_info.end_date:
                     return True
                 else:
                     return False
@@ -36,7 +37,7 @@ class Company(models.Model):
                 return False
         else:
             return False
-    
+
     def subscription_days_remaining(self):
         if self.user.user_subscriptions.exists():
             subscription = self.user.user_subscriptions.filter(is_paid=True, subscription__type='YEARLY')
@@ -51,7 +52,7 @@ class Company(models.Model):
             else:
                 return 0
         else:
-            return 0           
+            return 0
 
 
 class Price(BaseModel):
@@ -103,9 +104,9 @@ class TechnolgyStack(BaseModel):
 
 
 class HireStatus(BaseModel):
-    PENDING=1
-    APPROVED=2
-    REJECTED=3
+    PENDING = 1
+    APPROVED = 2
+    REJECTED = 3
 
     name = models.CharField(max_length=255)
     status_order = models.PositiveIntegerField(blank=True, null=True)
@@ -133,6 +134,7 @@ class ReplacementRequests(BaseModel):
     def __str__(self) -> str:
         return str(self.id)
 
+
 class Advertisement(BaseModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
     job_title = models.CharField(max_length=255, blank=True, null=True)
@@ -141,22 +143,21 @@ class Advertisement(BaseModel):
     company_name = models.CharField(max_length=255)
     description_of_job = models.TextField(null=True, blank=True)
     filter = models.CharField(max_length=150, blank=True, null=True)
-    
+
     def __str__(self) -> str:
         return str(self.job_title)
-    
+
     class Meta:
-      abstract = False
-      
+        abstract = False
+
+
 class RecommendationCandidate(models.Model):
-    
     candidate_name = models.CharField(max_length=255)
     candidate_skill = models.CharField(max_length=255)
     company_name = models.CharField(max_length=255)
 
     def __str__(self) -> str:
         return str(self.candidate_name)
-    
+
     class Meta:
-      abstract = False
-    
+        abstract = False
